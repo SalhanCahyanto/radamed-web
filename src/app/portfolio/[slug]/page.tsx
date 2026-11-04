@@ -4,7 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { PORTFOLIO_PROJECTS } from '@/data/mockData';
+import { PORTFOLIO_PROJECTS, COMPANY_PROFILE } from '@/data/mockData';
+import { MotionWrapper } from '@/components/common/MotionWrapper';
 
 interface PageProps {
   params: Promise<{
@@ -24,13 +25,29 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!project) {
     return {
-      title: 'Proyek Tidak Ditemukan',
+      title: `Proyek Tidak Ditemukan | ${COMPANY_PROFILE.shortName}`,
     };
   }
 
   return {
-    title: `${project.title} | Portofolio`,
-    description: project.summary,
+    title: `${project.title} | ${COMPANY_PROFILE.shortName}`,
+    description: `${project.summary} - Portofolio pekerjaan oleh ${COMPANY_PROFILE.legalName}.`,
+    openGraph: {
+      title: `${project.title} | ${COMPANY_PROFILE.shortName}`,
+      description: project.summary,
+      url: `/portfolio/${project.slug}`,
+      siteName: COMPANY_PROFILE.legalName,
+      locale: 'id_ID',
+      type: 'article',
+      images: [
+        {
+          url: project.coverImage,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+    },
   };
 }
 
@@ -46,260 +63,323 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col w-full">
-      {/* Header Detail */}
+      {/* 1. Top Header Band (#0B2343 Gradient) */}
       <section
-        className="w-full text-white pt-14 pb-20"
+        className="w-full text-white pt-16 pb-24 sm:pt-20 sm:pb-28"
         style={{
           background: 'linear-gradient(135deg, #0B2343 0%, #04467A 100%)',
         }}
+        aria-label="Header Detail Portofolio"
       >
-        <div className="container-custom flex flex-col gap-5">
-          {/* Top Bar: Back Link & Breadcrumb */}
+        <div className="container-custom flex flex-col gap-6">
+          {/* Top Bar: Navigasi Kembali & Breadcrumb */}
           <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-white/80">
             <Link
               href="/portfolio"
-              className="inline-flex items-center gap-2 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 hover:text-white transition-colors focus-visible:outline-none focus-visible:underline font-medium"
             >
               <ArrowLeft className="w-4 h-4" aria-hidden="true" />
               <span>Kembali ke Portofolio</span>
             </Link>
-            <div className="flex items-center gap-2 text-xs sm:text-sm">
+
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs sm:text-sm text-white/75">
               <Link href="/portfolio" className="hover:text-white transition-colors">
                 Portofolio
               </Link>
-              <span>/</span>
-              <span className="text-white font-medium">{project.title}</span>
+              <span aria-hidden="true">/</span>
+              <span className="text-white font-medium truncate max-w-[200px] sm:max-w-none">
+                {project.title}
+              </span>
+            </nav>
+          </div>
+
+          {/* Judul, Deskripsi Singkat, & Nama Fasilitas */}
+          <div className="flex flex-col gap-3 max-w-3xl pt-2">
+            <MotionWrapper delay={0.05}>
+              <h1
+                className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                {project.title}
+              </h1>
+            </MotionWrapper>
+
+            <MotionWrapper delay={0.1}>
+              <p className="text-base sm:text-lg text-white/85 leading-relaxed font-normal">
+                {project.summary}
+              </p>
+            </MotionWrapper>
+
+            <MotionWrapper delay={0.15}>
+              <p className="text-xs sm:text-sm text-white/70 mt-1">
+                <span className="font-medium text-white/90">Nama fasilitas:</span> {project.facility}
+              </p>
+            </MotionWrapper>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Overlapping Hero Image */}
+      <section className="w-full bg-white relative" aria-label="Foto Utama Proyek">
+        <div className="container-custom -mt-14 sm:-mt-20 relative z-10">
+          <MotionWrapper delay={0.1}>
+            <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-md bg-slate-100 border border-[#DCE5F0]">
+              <Image
+                src={project.coverImage}
+                alt={project.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1200px) 100vw, 1200px"
+              />
             </div>
-          </div>
-
-          {/* Project Title & Summary */}
-          <div className="mt-2 flex flex-col gap-2 max-w-4xl">
-            <span className="inline-block text-xs uppercase tracking-wider text-[#8bbffd] font-semibold">
-              {project.category}
-            </span>
-            <h1
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white"
-              style={{ fontFamily: 'var(--font-heading)' }}
-            >
-              {project.title}
-            </h1>
-            <p className="text-lg text-white/85 leading-relaxed mt-1">
-              {project.summary}
-            </p>
-            <p className="text-xs sm:text-sm text-white/70 mt-2">
-              Nama fasilitas: {project.facility}
-            </p>
-          </div>
+          </MotionWrapper>
         </div>
       </section>
 
-      {/* Main Hero Project Image */}
-      <section className="w-full bg-white">
-        <div className="container-custom -mt-10 sm:-mt-12">
-          <div className="relative w-full aspect-[16/9] max-h-[540px] rounded-xl overflow-hidden shadow-md border border-[#DCE5F0] bg-slate-100">
-            <Image
-              src={project.coverImage}
-              alt={project.title}
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 1200px) 100vw, 1200px"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Scope of Work & Category Info */}
-      <section className="w-full bg-white py-14">
+      {/* 3. Section Lingkup Pekerjaan & Kategori Layanan (#FFFFFF) */}
+      <section className="w-full bg-white py-14 sm:py-18 border-b border-[#DCE5F0]" aria-label="Lingkup dan Kategori">
         <div className="container-custom">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 md:divide-x md:divide-[#DCE5F0]">
-            <div>
-              <h2
-                className="text-lg font-bold text-[#0B2343] mb-4 tracking-tight"
-                style={{ fontFamily: 'var(--font-heading)' }}
-              >
-                Lingkup Pekerjaan
-              </h2>
-              <ul className="flex flex-col gap-2.5 text-slate-700 text-sm sm:text-base">
-                {project.scopeOfWork.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5">
-                    <span className="text-[#04467A] font-bold text-lg leading-none mt-0.5">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Kolom Kiri: Lingkup Pekerjaan */}
+            <MotionWrapper delay={0.05}>
+              <div>
+                <h2
+                  className="text-lg sm:text-xl font-bold text-[#0B2343] mb-4 tracking-tight"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  Lingkup Pekerjaan
+                </h2>
+                <ul className="flex flex-col gap-2.5 text-slate-700 text-sm sm:text-base">
+                  {project.scopeOfWork.map((scope, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5">
+                      <span className="text-[#04467A] font-bold text-lg leading-none mt-0.5">•</span>
+                      <span className="leading-relaxed">{scope}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </MotionWrapper>
 
-            <div className="md:pl-12">
-              <h2
-                className="text-lg font-bold text-[#0B2343] mb-4 tracking-tight"
-                style={{ fontFamily: 'var(--font-heading)' }}
-              >
-                Kategori Layanan
-              </h2>
-              <p className="text-base text-slate-700">{project.category}</p>
-            </div>
+            {/* Kolom Kanan: Kategori Layanan */}
+            <MotionWrapper delay={0.1}>
+              <div className="md:pl-12">
+                <h2
+                  className="text-lg sm:text-xl font-bold text-[#0B2343] mb-4 tracking-tight"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  Kategori Layanan
+                </h2>
+                <p className="text-base sm:text-lg text-slate-700 font-medium leading-relaxed">
+                  {project.category}
+                </p>
+              </div>
+            </MotionWrapper>
           </div>
         </div>
       </section>
 
-      {/* Tantangan & Solusi */}
+      {/* 4. Section Tantangan & Solusi (#F5F8FD) */}
       <section
-        className="w-full py-16 border-y border-[#DCE5F0]"
-        style={{
-          background: 'linear-gradient(180deg, #EAF1FC 0%, #FFFFFF 100%)',
-        }}
+        className="w-full py-16 sm:py-20 bg-[#F5F8FD] border-b border-[#DCE5F0]"
+        aria-label="Tantangan dan Solusi"
       >
         <div className="container-custom">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
-            <div>
-              <h2
-                className="text-xl font-bold text-[#0B2343] mb-3 tracking-tight"
-                style={{ fontFamily: 'var(--font-heading)' }}
-              >
-                Tantangan
-              </h2>
-              <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                {project.challenge}
-              </p>
-            </div>
-            <div>
-              <h2
-                className="text-xl font-bold text-[#0B2343] mb-3 tracking-tight"
-                style={{ fontFamily: 'var(--font-heading)' }}
-              >
-                Solusi dan Proses
-              </h2>
-              <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                {project.solution}
-              </p>
-            </div>
+            {/* Tantangan */}
+            <MotionWrapper delay={0.05}>
+              <div>
+                <h2
+                  className="text-xl sm:text-2xl font-bold text-[#0B2343] mb-4 tracking-tight"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  Tantangan
+                </h2>
+                <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
+                  {project.challenge}
+                </p>
+              </div>
+            </MotionWrapper>
+
+            {/* Solusi dan Proses */}
+            <MotionWrapper delay={0.1}>
+              <div>
+                <h2
+                  className="text-xl sm:text-2xl font-bold text-[#0B2343] mb-4 tracking-tight"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  Solusi dan Proses
+                </h2>
+                <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
+                  {project.solution}
+                </p>
+              </div>
+            </MotionWrapper>
           </div>
         </div>
       </section>
 
-      {/* Galeri Dokumentasi */}
-      {project.gallery && project.gallery.length > 0 && (
-        <section className="w-full bg-white py-16">
-          <div className="container-custom">
+      {/* 5. Section Galeri (#FFFFFF) */}
+      <section className="w-full bg-white py-16 sm:py-20 border-b border-[#DCE5F0]" aria-label="Galeri Dokumentasi">
+        <div className="container-custom">
+          <MotionWrapper delay={0.05}>
             <h2
-              className="text-2xl font-bold text-[#0B2343] mb-8 tracking-tight"
+              className="text-2xl sm:text-3xl font-bold text-[#0B2343] mb-8 sm:mb-10 tracking-tight"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               Galeri
             </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Primary Gallery Image */}
-              <div className="lg:col-span-7 flex flex-col">
-                <div className="relative w-full h-[360px] sm:h-[420px] rounded-xl overflow-hidden border border-[#DCE5F0] bg-slate-100">
-                  <Image
-                    src={project.gallery[0].url}
-                    alt={project.gallery[0].caption}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                  />
-                </div>
-                <span className="text-xs text-slate-500 mt-2">
-                  {project.gallery[0].caption}
-                </span>
-              </div>
+          </MotionWrapper>
 
-              {/* Secondary Gallery Images */}
-              <div className="lg:col-span-5 flex flex-col gap-6">
-                {project.gallery.slice(1).map((img, idx) => (
-                  <div key={idx} className="flex flex-col">
-                    <div className="relative w-full h-[180px] sm:h-[195px] rounded-xl overflow-hidden border border-[#DCE5F0] bg-slate-100">
+          {/* Asymmetric Gallery Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Foto Besar Kolom Kiri (7 Kolom) */}
+            {project.gallery[0] && (
+              <div className="lg:col-span-7 flex flex-col">
+                <MotionWrapper delay={0.1}>
+                  <div className="relative w-full h-[320px] sm:h-[400px] rounded-xl overflow-hidden bg-slate-100 border border-[#DCE5F0] shadow-sm">
+                    <Image
+                      src={project.gallery[0].url}
+                      alt={project.gallery[0].caption || project.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 60vw"
+                    />
+                  </div>
+                  <span className="text-xs text-slate-500 mt-2 font-normal">
+                    {project.gallery[0].caption || 'Keterangan foto'}
+                  </span>
+                </MotionWrapper>
+              </div>
+            )}
+
+            {/* Dua Foto Bertumpuk Kolom Kanan (5 Kolom) */}
+            <div className="lg:col-span-5 flex flex-col gap-6">
+              {project.gallery.slice(1, 3).map((item, idx) => (
+                <div key={idx} className="flex flex-col">
+                  <MotionWrapper delay={0.15 + idx * 0.05}>
+                    <div className="relative w-full h-[180px] sm:h-[188px] rounded-xl overflow-hidden bg-slate-100 border border-[#DCE5F0] shadow-sm">
                       <Image
-                        src={img.url}
-                        alt={img.caption}
+                        src={item.url}
+                        alt={item.caption || project.title}
                         fill
                         className="object-cover"
                         sizes="(max-width: 1024px) 100vw, 40vw"
                       />
                     </div>
-                    <span className="text-xs text-slate-500 mt-1.5">
-                      {img.caption}
+                    <span className="text-xs text-slate-500 mt-1.5 font-normal">
+                      {item.caption || 'Keterangan foto'}
                     </span>
-                  </div>
-                ))}
-              </div>
+                  </MotionWrapper>
+                </div>
+              ))}
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* Proyek Lainnya */}
-      <section className="w-full bg-[#F5F8FD] py-16 border-t border-[#DCE5F0]">
+      {/* 6. Section Proyek Lainnya (#F5F8FD) */}
+      <section
+        className="w-full bg-[#F5F8FD] py-16 sm:py-20 border-b border-[#DCE5F0]"
+        aria-label="Proyek Lainnya"
+      >
         <div className="container-custom">
-          <div className="flex items-center justify-between mb-8">
-            <h2
-              className="text-2xl font-bold text-[#0B2343] tracking-tight"
-              style={{ fontFamily: 'var(--font-heading)' }}
-            >
-              Proyek Lainnya
-            </h2>
-            <Link
-              href="/portfolio"
-              className="text-sm font-semibold text-[#04467A] hover:underline flex items-center gap-1"
-            >
-              <span>Lihat semua portofolio</span>
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
+          {/* Header Bar */}
+          <div className="flex items-center justify-between mb-8 sm:mb-10">
+            <MotionWrapper delay={0.05}>
+              <h2
+                className="text-2xl sm:text-3xl font-bold text-[#0B2343] tracking-tight"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                Proyek Lainnya
+              </h2>
+            </MotionWrapper>
+
+            <MotionWrapper delay={0.05}>
+              <Link
+                href="/portfolio"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#04467A] hover:text-[#0B2343] transition-colors focus-visible:outline-none focus-visible:underline"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                <span>Lihat semua portofolio</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
+            </MotionWrapper>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {otherProjects.map((p) => (
-              <Link
-                key={p.id}
-                href={`/portfolio/${p.slug}`}
-                className="group flex flex-col bg-white rounded-xl overflow-hidden border border-[#DCE5F0] shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
-                  <Image
-                    src={p.coverImage}
-                    alt={p.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                </div>
-                <div className="p-4 flex flex-col">
-                  <span className="text-xs uppercase text-[#04467A] font-semibold mb-1">
-                    {p.category}
-                  </span>
-                  <h3
-                    className="text-base font-bold text-[#0B2343] group-hover:text-[#04467A] transition-colors"
-                    style={{ fontFamily: 'var(--font-heading)' }}
-                  >
-                    {p.title}
-                  </h3>
-                </div>
-              </Link>
+          {/* Grid 3 Proyek Terkait */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            {otherProjects.map((other, idx) => (
+              <MotionWrapper key={other.id} delay={0.1 + idx * 0.05}>
+                <Link
+                  href={`/portfolio/${other.slug}`}
+                  className="group flex flex-col bg-white rounded-xl overflow-hidden border border-[#DCE5F0] shadow-sm hover:shadow-md transition-all duration-300 h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#04467A]"
+                >
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+                    <Image
+                      src={other.coverImage}
+                      alt={other.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  </div>
+
+                  <div className="p-5 flex flex-col justify-between flex-1">
+                    <div>
+                      <span className="text-[#04467A] text-[11px] font-semibold uppercase tracking-wider block mb-1.5">
+                        {other.category}
+                      </span>
+                      <h3
+                        className="text-[#0B2343] text-base font-bold group-hover:text-[#04467A] transition-colors line-clamp-2"
+                        style={{ fontFamily: 'var(--font-heading)' }}
+                      >
+                        {other.title}
+                      </h3>
+                    </div>
+
+                    <div className="pt-3 mt-2 flex justify-end items-center">
+                      <span className="text-slate-400 group-hover:text-[#04467A] group-hover:translate-x-1 transition-all">
+                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </MotionWrapper>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Bottom CTA Band */}
-      <section className="w-full bg-white text-center py-16 border-t border-[#DCE5F0]">
-        <div className="container-custom max-w-md mx-auto">
-          <h2
-            className="text-xl sm:text-2xl font-bold text-[#0B2343] mb-4 tracking-tight"
-            style={{ fontFamily: 'var(--font-heading)' }}
-          >
-            Butuh pekerjaan serupa?
-          </h2>
-          <Link
-            href="/kontak"
-            className="inline-block bg-[#04467A] hover:bg-[#0B2343] text-white px-8 py-3 rounded-lg font-semibold text-[15px] transition-colors shadow-sm"
-            style={{ fontFamily: 'var(--font-heading)' }}
-          >
-            Hubungi Kami
-          </Link>
+      {/* 7. Bottom CTA (#FFFFFF) */}
+      <section className="w-full bg-white text-center py-16 sm:py-20" aria-label="Kontak Bantuan">
+        <div className="max-w-md mx-auto px-4 sm:px-6">
+          <MotionWrapper delay={0.05}>
+            <h2
+              className="text-2xl sm:text-3xl font-bold text-[#0B2343] mb-4 tracking-tight"
+              style={{ fontFamily: 'var(--font-heading)' }}
+            >
+              Butuh pekerjaan serupa?
+            </h2>
+          </MotionWrapper>
+
+          <MotionWrapper delay={0.1}>
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6">
+              Diskusikan kebutuhan instalasi, pemeliharaan, atau renovasi fasilitas medis Anda bersama tim engineer ahli kami.
+            </p>
+          </MotionWrapper>
+
+          <MotionWrapper delay={0.15}>
+            <Link
+              href="/kontak"
+              className="inline-flex items-center justify-center bg-[#04467A] text-white px-8 py-3.5 rounded-lg font-semibold text-sm sm:text-base hover:bg-[#0B2343] transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#04467A]"
+              style={{ fontFamily: 'var(--font-heading)' }}
+            >
+              Hubungi Kami
+            </Link>
+          </MotionWrapper>
         </div>
       </section>
     </div>
   );
 }
-
