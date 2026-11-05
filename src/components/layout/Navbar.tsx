@@ -6,10 +6,20 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, Phone } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
 import { NAV_LINKS, COMPANY_PROFILE } from '@/data/mockData';
+import type { SanitySiteSettings } from '@/sanity/lib/queries';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  settings?: SanitySiteSettings | null;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ settings }) => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const phoneDisplay = settings?.phone || COMPANY_PROFILE.contact.phoneDisplay;
+  const whatsappUrl = settings?.whatsappNumber
+    ? `https://wa.me/${settings.whatsappNumber.replace(/[^0-9]/g, '')}`
+    : COMPANY_PROFILE.contact.whatsappUrl;
 
   // Close on Escape key press
   useEffect(() => {
@@ -92,7 +102,7 @@ export const Navbar: React.FC = () => {
         {/* Mobile Hamburger Toggle */}
         <div className="flex items-center gap-2 lg:hidden">
           <a
-            href={COMPANY_PROFILE.contact.whatsappUrl}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Hubungi via WhatsApp"
@@ -171,11 +181,10 @@ export const Navbar: React.FC = () => {
             Hubungi Kami
           </Link>
           <div className="text-xs text-slate-500 text-center leading-relaxed mt-2">
-            Telepon: {COMPANY_PROFILE.contact.phoneDisplay}
+            Telepon: {phoneDisplay}
           </div>
         </div>
       </div>
     </header>
   );
 };
-

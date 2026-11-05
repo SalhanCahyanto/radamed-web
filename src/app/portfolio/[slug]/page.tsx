@@ -6,6 +6,15 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { PORTFOLIO_PROJECTS, COMPANY_PROFILE } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
+import { PortableText } from '@/components/PortableText';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import {
+  PROJECT_BY_SLUG_QUERY,
+  OTHER_PROJECTS_QUERY,
+  ALL_PROJECT_SLUGS_QUERY,
+  type SanityPortfolioProject,
+} from '@/sanity/lib/queries';
+import { urlForImage } from '@/sanity/lib/image';
 
 interface PageProps {
   params: Promise<{
@@ -14,6 +23,15 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
+  const sanitySlugs = await sanityFetch<string[]>({
+    query: ALL_PROJECT_SLUGS_QUERY,
+    tags: ['portfolioProject'],
+  });
+
+  if (sanitySlugs && sanitySlugs.length > 0) {
+    return sanitySlugs.map((slug) => ({ slug }));
+  }
+
   return PORTFOLIO_PROJECTS.map((project) => ({
     slug: project.slug,
   }));
@@ -21,30 +39,56 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = PORTFOLIO_PROJECTS.find((p) => p.slug === slug);
 
-  if (!project) {
+  const sanityProject = await sanityFetch<SanityPortfolioProject>({
+    query: PROJECT_BY_SLUG_QUERY,
+    params: { slug },
+    tags: [`portfolioProject:${slug}`],
+  });
+
+  if (sanityProject) {
+    const metaTitle = sanityProject.seoTitle || `${sanityProject.title} | ${COMPANY_PROFILE.shortName}`;
+    const metaDesc = sanityProject.seoDescription || sanityProject.excerpt;
+    const imageUrl = sanityProject.coverImage ? urlForImage(sanityProject.coverImage).url() : undefined;
+
+    return {
+      title: metaTitle,
+      description: metaDesc,
+      openGraph: {
+        title: metaTitle,
+        description: metaDesc,
+        url: `/portfolio/${sanityProject.slug.current}`,
+        siteName: COMPANY_PROFILE.legalName,
+        locale: 'id_ID',
+        type: 'article',
+        ...(imageUrl ? { images: [{ url: imageUrl, alt: sanityProject.title }] } : {}),
+      },
+    };
+  }
+
+  const mockProject = PORTFOLIO_PROJECTS.find((p) => p.slug === slug);
+  if (!mockProject) {
     return {
       title: `Proyek Tidak Ditemukan | ${COMPANY_PROFILE.shortName}`,
     };
   }
 
   return {
-    title: `${project.title} | ${COMPANY_PROFILE.shortName}`,
-    description: `${project.summary} - Portofolio pekerjaan oleh ${COMPANY_PROFILE.legalName}.`,
+    title: `${mockProject.title} | ${COMPANY_PROFILE.shortName}`,
+    description: `${mockProject.summary} - Portofolio pekerjaan oleh ${COMPANY_PROFILE.legalName}.`,
     openGraph: {
-      title: `${project.title} | ${COMPANY_PROFILE.shortName}`,
-      description: project.summary,
-      url: `/portfolio/${project.slug}`,
+      title: `${mockProject.title} | ${COMPANY_PROFILE.shortName}`,
+      description: mockProject.summary,
+      url: `/portfolio/${mockProject.slug}`,
       siteName: COMPANY_PROFILE.legalName,
       locale: 'id_ID',
       type: 'article',
       images: [
         {
-          url: project.coverImage,
+          url: mockProject.coverImage,
           width: 1200,
           height: 630,
-          alt: project.title,
+          alt: mockProject.title,
         },
       ],
     },
@@ -53,13 +97,57 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PortfolioDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = PORTFOLIO_PROJECTS.find((p) => p.slug === slug);
 
-  if (!project) {
+  const [sanityProject, sanityOthers] = await Promise.all([
+    sanityFetch<SanityPortfolioProject>({
+      query: PROJECT_BY_SLUG_QUERY,
+      params: { slug },
+      tags: [`portfolioProject:${slug}`],
+    }),
+    sanityFetch<SanityPortfolioProject[]>({
+      query: OTHER_PROJECTS_QUERY,
+      params: { slug },
+      tags: ['portfolioProject'],
+    }),
+  ]);
+
+  const mockProject = PORTFOLIO_PROJECTS.find((p) => p.slug === slug);
+
+  if (!sanityProject && !mockProject) {
     notFound();
   }
 
-  const otherProjects = PORTFOLIO_PROJECTS.filter((p) => p.id !== project.id).slice(0, 3);
+  const projectTitle = sanityProject ? sanityProject.title : mockProject!.title;
+  const projectSummary = sanityProject ? sanityProject.excerpt : mockProject!.summary;
+  const projectFacility = sanityProject ? sanityProject.clientName : mockProject!.facility;
+  const projectCategory = sanityProject ? sanityProject.serviceCategory : mockProject!.category;
+  const projectCover = sanityProject && sanityProject.coverImage
+    ? urlForImage(sanityProject.coverImage).url()
+    : mockProject!.coverImage;
+
+  const projectScope = mockProject?.scopeOfWork || [
+    'Pemeriksaan dan persiapan lokasi penempatan alat medis',
+    'Pemasangan mekanikal, elektrikal, dan sistem pelindung radiasi',
+    'Uji fungsi (commissioning test) dan verifikasi kalibrasi presisi',
+    'Pelatihan operasional bagi tenaga medis rumah sakit',
+  ];
+
+  const galleryItems = sanityProject?.gallery && sanityProject.gallery.length > 0
+    ? sanityProject.gallery.map((item) => ({
+        url: urlForImage(item.image).url(),
+        caption: item.caption || item.altText || projectTitle,
+      }))
+    : mockProject?.gallery || [];
+
+  const otherProjects = sanityOthers && sanityOthers.length > 0
+    ? sanityOthers.map((o) => ({
+        id: o._id,
+        slug: o.slug.current,
+        title: o.title,
+        category: o.serviceCategory,
+        coverImage: o.coverImage ? urlForImage(o.coverImage).url() : PORTFOLIO_PROJECTS[0].coverImage,
+      }))
+    : PORTFOLIO_PROJECTS.filter((p) => p.slug !== slug).slice(0, 3);
 
   return (
     <div className="flex flex-col w-full">
@@ -88,7 +176,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
               </Link>
               <span aria-hidden="true">/</span>
               <span className="text-white font-medium truncate max-w-[200px] sm:max-w-none">
-                {project.title}
+                {projectTitle}
               </span>
             </nav>
           </div>
@@ -100,19 +188,19 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                {project.title}
+                {projectTitle}
               </h1>
             </MotionWrapper>
 
             <MotionWrapper delay={0.1}>
               <p className="text-base sm:text-lg text-white/85 leading-relaxed font-normal">
-                {project.summary}
+                {projectSummary}
               </p>
             </MotionWrapper>
 
             <MotionWrapper delay={0.15}>
               <p className="text-xs sm:text-sm text-white/70 mt-1">
-                <span className="font-medium text-white/90">Nama fasilitas:</span> {project.facility}
+                <span className="font-medium text-white/90">Nama fasilitas:</span> {projectFacility}
               </p>
             </MotionWrapper>
           </div>
@@ -125,8 +213,8 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           <MotionWrapper delay={0.1}>
             <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-md bg-slate-100 border border-[#DCE5F0]">
               <Image
-                src={project.coverImage}
-                alt={project.title}
+                src={projectCover}
+                alt={projectTitle}
                 fill
                 priority
                 className="object-cover"
@@ -151,7 +239,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                   Lingkup Pekerjaan
                 </h2>
                 <ul className="flex flex-col gap-2.5 text-slate-700 text-sm sm:text-base">
-                  {project.scopeOfWork.map((scope, idx) => (
+                  {projectScope.map((scope, idx) => (
                     <li key={idx} className="flex items-start gap-2.5">
                       <span className="text-[#04467A] font-bold text-lg leading-none mt-0.5">•</span>
                       <span className="leading-relaxed">{scope}</span>
@@ -171,7 +259,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                   Kategori Layanan
                 </h2>
                 <p className="text-base sm:text-lg text-slate-700 font-medium leading-relaxed">
-                  {project.category}
+                  {projectCategory}
                 </p>
               </div>
             </MotionWrapper>
@@ -195,9 +283,13 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 >
                   Tantangan
                 </h2>
-                <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                  {project.challenge}
-                </p>
+                {sanityProject?.challenge && sanityProject.challenge.length > 0 ? (
+                  <PortableText value={sanityProject.challenge} />
+                ) : (
+                  <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
+                    {mockProject?.challenge}
+                  </p>
+                )}
               </div>
             </MotionWrapper>
 
@@ -210,9 +302,13 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 >
                   Solusi dan Proses
                 </h2>
-                <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                  {project.solution}
-                </p>
+                {sanityProject?.solution && sanityProject.solution.length > 0 ? (
+                  <PortableText value={sanityProject.solution} />
+                ) : (
+                  <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
+                    {mockProject?.solution}
+                  </p>
+                )}
               </div>
             </MotionWrapper>
           </div>
@@ -220,63 +316,65 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
       </section>
 
       {/* 5. Section Galeri (#FFFFFF) */}
-      <section className="w-full bg-white py-16 sm:py-20 border-b border-[#DCE5F0]" aria-label="Galeri Dokumentasi">
-        <div className="container-custom">
-          <MotionWrapper delay={0.05}>
-            <h2
-              className="text-2xl sm:text-3xl font-bold text-[#0B2343] mb-8 sm:mb-10 tracking-tight"
-              style={{ fontFamily: 'var(--font-heading)' }}
-            >
-              Galeri
-            </h2>
-          </MotionWrapper>
+      {galleryItems.length > 0 && (
+        <section className="w-full bg-white py-16 sm:py-20 border-b border-[#DCE5F0]" aria-label="Galeri Dokumentasi">
+          <div className="container-custom">
+            <MotionWrapper delay={0.05}>
+              <h2
+                className="text-2xl sm:text-3xl font-bold text-[#0B2343] mb-8 sm:mb-10 tracking-tight"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                Galeri
+              </h2>
+            </MotionWrapper>
 
-          {/* Asymmetric Gallery Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Foto Besar Kolom Kiri (7 Kolom) */}
-            {project.gallery[0] && (
-              <div className="lg:col-span-7 flex flex-col">
-                <MotionWrapper delay={0.1}>
-                  <div className="relative w-full h-[320px] sm:h-[400px] rounded-xl overflow-hidden bg-slate-100 border border-[#DCE5F0] shadow-sm">
-                    <Image
-                      src={project.gallery[0].url}
-                      alt={project.gallery[0].caption || project.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 60vw"
-                    />
-                  </div>
-                  <span className="text-xs text-slate-500 mt-2 font-normal">
-                    {project.gallery[0].caption || 'Keterangan foto'}
-                  </span>
-                </MotionWrapper>
-              </div>
-            )}
-
-            {/* Dua Foto Bertumpuk Kolom Kanan (5 Kolom) */}
-            <div className="lg:col-span-5 flex flex-col gap-6">
-              {project.gallery.slice(1, 3).map((item, idx) => (
-                <div key={idx} className="flex flex-col">
-                  <MotionWrapper delay={0.15 + idx * 0.05}>
-                    <div className="relative w-full h-[180px] sm:h-[188px] rounded-xl overflow-hidden bg-slate-100 border border-[#DCE5F0] shadow-sm">
+            {/* Asymmetric Gallery Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Foto Besar Kolom Kiri (7 Kolom) */}
+              {galleryItems[0] && (
+                <div className="lg:col-span-7 flex flex-col">
+                  <MotionWrapper delay={0.1}>
+                    <div className="relative w-full h-[320px] sm:h-[400px] rounded-xl overflow-hidden bg-slate-100 border border-[#DCE5F0] shadow-sm">
                       <Image
-                        src={item.url}
-                        alt={item.caption || project.title}
+                        src={galleryItems[0].url}
+                        alt={galleryItems[0].caption || projectTitle}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 1024px) 100vw, 40vw"
+                        sizes="(max-width: 1024px) 100vw, 60vw"
                       />
                     </div>
-                    <span className="text-xs text-slate-500 mt-1.5 font-normal">
-                      {item.caption || 'Keterangan foto'}
+                    <span className="text-xs text-slate-500 mt-2 font-normal">
+                      {galleryItems[0].caption}
                     </span>
                   </MotionWrapper>
                 </div>
-              ))}
+              )}
+
+              {/* Dua Foto Bertumpuk Kolom Kanan (5 Kolom) */}
+              <div className="lg:col-span-5 flex flex-col gap-6">
+                {galleryItems.slice(1, 3).map((item, idx) => (
+                  <div key={idx} className="flex flex-col">
+                    <MotionWrapper delay={0.15 + idx * 0.05}>
+                      <div className="relative w-full h-[180px] sm:h-[188px] rounded-xl overflow-hidden bg-slate-100 border border-[#DCE5F0] shadow-sm">
+                        <Image
+                          src={item.url}
+                          alt={item.caption || projectTitle}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 1024px) 100vw, 40vw"
+                        />
+                      </div>
+                      <span className="text-xs text-slate-500 mt-1.5 font-normal">
+                        {item.caption}
+                      </span>
+                    </MotionWrapper>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 6. Section Proyek Lainnya (#F5F8FD) */}
       <section
@@ -310,7 +408,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           {/* Grid 3 Proyek Terkait */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {otherProjects.map((other, idx) => (
-              <MotionWrapper key={other.id} delay={0.1 + idx * 0.05}>
+              <MotionWrapper key={other.id || other.slug} delay={0.1 + idx * 0.05}>
                 <Link
                   href={`/portfolio/${other.slug}`}
                   className="group flex flex-col bg-white rounded-xl overflow-hidden border border-[#DCE5F0] shadow-sm hover:shadow-md transition-all duration-300 h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#04467A]"

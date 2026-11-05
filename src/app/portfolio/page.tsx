@@ -1,8 +1,11 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { COMPANY_PROFILE } from '@/data/mockData';
+import { COMPANY_PROFILE, PORTFOLIO_PROJECTS, type PortfolioItem } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
 import { PortfolioClient } from './PortfolioClient';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import { ALL_PROJECTS_QUERY, type SanityPortfolioProject } from '@/sanity/lib/queries';
+import { urlForImage } from '@/sanity/lib/image';
 
 export const metadata: Metadata = {
   title: `Portofolio | ${COMPANY_PROFILE.shortName}`,
@@ -19,7 +22,39 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PortfolioPage() {
+export default async function PortfolioPage() {
+  const sanityProjects = await sanityFetch<SanityPortfolioProject[]>({
+    query: ALL_PROJECTS_QUERY,
+    tags: ['portfolioProject'],
+  });
+
+  const categorySlugMap: Record<string, PortfolioItem['categorySlug']> = {
+    'Instalasi Alat': 'instalasi-alat',
+    'Instalasi Ruang': 'instalasi-ruang',
+    'Perbaikan': 'perbaikan',
+    'Renovasi': 'renovasi',
+  };
+
+  const initialProjects: PortfolioItem[] =
+    sanityProjects && sanityProjects.length > 0
+      ? sanityProjects.map((p) => ({
+          id: p._id,
+          slug: p.slug.current,
+          title: p.title,
+          category: p.serviceCategory,
+          categorySlug: categorySlugMap[p.serviceCategory] || 'instalasi-alat',
+          facility: p.clientName,
+          summary: p.excerpt,
+          coverImage: p.coverImage
+            ? urlForImage(p.coverImage).url()
+            : PORTFOLIO_PROJECTS[0].coverImage,
+          scopeOfWork: [],
+          challenge: '',
+          solution: '',
+          gallery: [],
+        }))
+      : PORTFOLIO_PROJECTS;
+
   return (
     <div className="flex flex-col w-full">
       {/* 1. Page Header (#0B2343 Gradient) */}
@@ -53,7 +88,7 @@ export default function PortfolioPage() {
       {/* 2. Main Content with Interactive Category Filter (#F5F8FD) */}
       <section className="w-full py-16 sm:py-20 bg-[#F5F8FD]" aria-label="Daftar Portofolio">
         <div className="container-custom">
-          <PortfolioClient />
+          <PortfolioClient initialProjects={initialProjects} />
         </div>
       </section>
     </div>

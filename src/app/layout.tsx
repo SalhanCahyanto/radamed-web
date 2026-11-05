@@ -4,6 +4,8 @@ import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { COMPANY_PROFILE } from '@/data/mockData';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import { SITE_SETTINGS_QUERY, type SanitySiteSettings } from '@/sanity/lib/queries';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -47,11 +49,16 @@ export const viewport: Viewport = {
   themeColor: '#04467A',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await sanityFetch<SanitySiteSettings>({
+    query: SITE_SETTINGS_QUERY,
+    tags: ['siteSettings'],
+  });
+
   return (
     <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased selection:bg-[#04467A] selection:text-white">
@@ -64,7 +71,7 @@ export default function RootLayout({
         </a>
 
         {/* Global Navigation Bar */}
-        <Navbar />
+        <Navbar settings={settings} />
 
         {/* Main Content Area */}
         <main id="main-content" className="flex-1 w-full pt-20">
@@ -72,7 +79,7 @@ export default function RootLayout({
         </main>
 
         {/* Global Institutional Footer */}
-        <Footer />
+        <Footer settings={settings} />
       </body>
     </html>
   );

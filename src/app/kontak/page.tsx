@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { Phone, Mail, MapPin, ArrowRight, PhoneCall } from 'lucide-react';
 import { COMPANY_PROFILE } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import { SITE_SETTINGS_QUERY, type SanitySiteSettings } from '@/sanity/lib/queries';
 
 export const metadata: Metadata = {
   title: `Hubungi Kami | ${COMPANY_PROFILE.shortName}`,
@@ -18,7 +20,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function KontakPage() {
+export default async function KontakPage() {
+  const settings = await sanityFetch<SanitySiteSettings>({
+    query: SITE_SETTINGS_QUERY,
+    tags: ['siteSettings'],
+  });
+
+  const phoneDisplay = settings?.phone || COMPANY_PROFILE.contact.phoneDisplay;
+  const phoneRaw = settings?.phone
+    ? settings.phone.replace(/[^0-9+]/g, '')
+    : COMPANY_PROFILE.contact.phoneRaw;
+  const email = settings?.email || COMPANY_PROFILE.contact.email;
+  const address = settings?.address || COMPANY_PROFILE.contact.address;
+  const mapUrl = settings?.mapUrl || COMPANY_PROFILE.contact.mapsUrl;
+
   return (
     <div className="flex flex-col w-full">
       {/* 1. Page Header (#0B2343 Gradient) */}
@@ -66,10 +81,10 @@ export default function KontakPage() {
                   className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-6 select-all"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
-                  {COMPANY_PROFILE.contact.phoneDisplay}
+                  {phoneDisplay}
                 </span>
                 <a
-                  href={`tel:${COMPANY_PROFILE.contact.phoneRaw}`}
+                  href={`tel:${phoneRaw}`}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-[#04467A] hover:bg-[#0B2343] text-white rounded-lg font-semibold text-sm transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#04467A]"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
@@ -92,10 +107,10 @@ export default function KontakPage() {
                   className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-6 select-all break-all"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
-                  {COMPANY_PROFILE.contact.email}
+                  {email}
                 </span>
                 <a
-                  href={`mailto:${COMPANY_PROFILE.contact.email}`}
+                  href={`mailto:${email}`}
                   className="inline-flex items-center gap-2 px-6 py-3 border border-[#04467A] text-[#04467A] hover:bg-[#EAF1FC] rounded-lg font-semibold text-sm transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#04467A]"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
@@ -128,14 +143,14 @@ export default function KontakPage() {
 
               <MotionWrapper delay={0.1}>
                 <address className="not-italic text-slate-600 text-base sm:text-lg leading-relaxed mt-4">
-                  {COMPANY_PROFILE.contact.address}
+                  {address}
                 </address>
               </MotionWrapper>
 
               <MotionWrapper delay={0.15}>
                 <div className="mt-6">
                   <a
-                    href={COMPANY_PROFILE.contact.mapsUrl}
+                    href={mapUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-[#04467A] font-semibold text-base hover:text-[#0B2343] transition-colors focus-visible:outline-none focus-visible:underline"

@@ -4,8 +4,26 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { COMPANY_PROFILE, SERVICES } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
+import type { SanityCompanyProfile } from '@/sanity/lib/queries';
 
-export const AboutSection: React.FC = () => {
+interface AboutSectionProps {
+  profile?: SanityCompanyProfile | null;
+}
+
+export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
+  const story =
+    profile?.intro ||
+    'RADAMED dibangun oleh tiga engineer dengan pengalaman lebih dari 10 tahun di bidang radiologi dan berbagai jenis peralatan kesehatan. Pelayanan dan kepuasan pelanggan adalah prioritas kami.';
+
+  const values =
+    profile?.values && profile.values.length > 0
+      ? profile.values.map((v, i) => ({
+          number: String(i + 1).padStart(2, '0'),
+          title: v.title,
+          description: v.description,
+        }))
+      : COMPANY_PROFILE.values;
+
   return (
     <section className="w-full bg-white py-20 lg:py-24" aria-label="Tentang RADAMED">
       <div className="container-custom">
@@ -23,7 +41,7 @@ export const AboutSection: React.FC = () => {
 
             <MotionWrapper delay={0.1}>
               <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-8">
-                RADAMED dibangun oleh tiga engineer dengan pengalaman lebih dari 10 tahun di bidang radiologi dan berbagai jenis peralatan kesehatan. Pelayanan dan kepuasan pelanggan adalah prioritas kami.
+                {story}
               </p>
             </MotionWrapper>
 
@@ -55,25 +73,33 @@ export const AboutSection: React.FC = () => {
           </div>
         </div>
 
-        {/* 5 Nilai Perusahaan Horizontal Bar */}
-        <MotionWrapper delay={0.25}>
-          <div className="mt-16 pt-8 border-t border-slate-200">
-            <div className="flex flex-wrap items-center justify-between gap-y-4 text-xs sm:text-sm font-medium text-slate-600">
-              {COMPANY_PROFILE.values.map((val, idx) => (
-                <React.Fragment key={val.number}>
-                  <span className="py-1">{val.title}</span>
-                  {idx < COMPANY_PROFILE.values.length - 1 && (
-                    <span className="hidden md:inline text-slate-300" aria-hidden="true">
-                      |
-                    </span>
-                  )}
-                </React.Fragment>
+        {/* Bar Horizontal 5 Nilai Perusahaan */}
+        <div className="mt-16 sm:mt-20 pt-10 sm:pt-12 border-t border-slate-200">
+          <MotionWrapper delay={0.25}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+              {values.map((val, idx) => (
+                <div
+                  key={val.number}
+                  className={`flex flex-col gap-1.5 ${idx !== 0 ? 'pt-4 sm:pt-0 sm:pl-6' : ''}`}
+                >
+                  <span className="text-xs font-bold text-[#04467A]">
+                    {val.number}
+                  </span>
+                  <h4
+                    className="text-sm font-bold text-slate-900"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
+                    {val.title}
+                  </h4>
+                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                    {val.description}
+                  </p>
+                </div>
               ))}
             </div>
-          </div>
-        </MotionWrapper>
+          </MotionWrapper>
+        </div>
       </div>
     </section>
   );
 };
-

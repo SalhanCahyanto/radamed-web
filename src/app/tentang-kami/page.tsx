@@ -5,6 +5,15 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { COMPANY_PROFILE, SERVICES } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
+import { PortableText } from '@/components/PortableText';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import {
+  COMPANY_PROFILE_QUERY,
+  SITE_SETTINGS_QUERY,
+  type SanityCompanyProfile,
+  type SanitySiteSettings,
+} from '@/sanity/lib/queries';
+import { urlForImage } from '@/sanity/lib/image';
 
 export const metadata: Metadata = {
   title: `Tentang Kami | ${COMPANY_PROFILE.shortName}`,
@@ -19,7 +28,40 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TentangKamiPage() {
+export default async function TentangKamiPage() {
+  const [profile, settings] = await Promise.all([
+    sanityFetch<SanityCompanyProfile>({
+      query: COMPANY_PROFILE_QUERY,
+      tags: ['companyProfile'],
+    }),
+    sanityFetch<SanitySiteSettings>({
+      query: SITE_SETTINGS_QUERY,
+      tags: ['siteSettings'],
+    }),
+  ]);
+
+  const tagline = settings?.tagline || COMPANY_PROFILE.tagline;
+  const headline = profile?.title || 'Dibangun dari pengalaman lapangan.';
+  const visionText = profile?.vision || COMPANY_PROFILE.vision;
+  const missionText = profile?.mission
+    ? Array.isArray(profile.mission)
+      ? profile.mission.join(' ')
+      : profile.mission
+    : COMPANY_PROFILE.mission;
+
+  const valuesList =
+    profile?.values && profile.values.length > 0
+      ? profile.values.map((v, i) => ({
+          number: String(i + 1).padStart(2, '0'),
+          title: v.title,
+          description: v.description,
+        }))
+      : COMPANY_PROFILE.values;
+
+  const imageSrc = profile?.heroImage
+    ? urlForImage(profile.heroImage).url()
+    : SERVICES[2].image;
+
   return (
     <div className="flex flex-col w-full">
       {/* 1. Page Header Band */}
@@ -40,7 +82,7 @@ export default function TentangKamiPage() {
 
             <MotionWrapper delay={0.1}>
               <p className="text-lg sm:text-xl text-white/85 leading-relaxed font-normal">
-                {COMPANY_PROFILE.tagline}
+                {tagline}
               </p>
             </MotionWrapper>
           </div>
@@ -58,14 +100,20 @@ export default function TentangKamiPage() {
                   className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0B2343] tracking-tight mb-6 leading-tight"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
-                  Dibangun dari pengalaman lapangan.
+                  {headline}
                 </h2>
               </MotionWrapper>
 
               <MotionWrapper delay={0.1}>
-                <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-8">
-                  {COMPANY_PROFILE.aboutStory}
-                </p>
+                {profile?.description && profile.description.length > 0 ? (
+                  <div className="mb-8">
+                    <PortableText value={profile.description} />
+                  </div>
+                ) : (
+                  <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-8">
+                    {profile?.intro || COMPANY_PROFILE.aboutStory}
+                  </p>
+                )}
               </MotionWrapper>
 
               <MotionWrapper delay={0.15}>
@@ -99,7 +147,7 @@ export default function TentangKamiPage() {
                   {/* Photo Frame */}
                   <div className="relative rounded-xl overflow-hidden shadow-sm aspect-[4/5] bg-slate-100 border border-[#DCE5F0]">
                     <Image
-                      src={SERVICES[2].image}
+                      src={imageSrc}
                       alt="Engineer RADAMED bekerja pada peralatan medis"
                       fill
                       priority
@@ -136,7 +184,7 @@ export default function TentangKamiPage() {
                 className="text-xl sm:text-2xl font-semibold text-[#0B2343] leading-snug"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                {COMPANY_PROFILE.vision}
+                {visionText}
               </p>
             </MotionWrapper>
 
@@ -158,7 +206,7 @@ export default function TentangKamiPage() {
                 className="text-xl sm:text-2xl font-semibold text-[#0B2343] leading-snug"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                {COMPANY_PROFILE.mission}
+                {missionText}
               </p>
             </MotionWrapper>
           </div>
@@ -180,7 +228,7 @@ export default function TentangKamiPage() {
           </MotionWrapper>
 
           <div className="flex flex-col border-t border-[#DCE5F0]">
-            {COMPANY_PROFILE.values.map((val, index) => (
+            {valuesList.map((val, index) => (
               <MotionWrapper key={val.number} delay={0.1 + index * 0.05}>
                 <div className="py-7 border-b border-[#DCE5F0] grid grid-cols-1 md:grid-cols-12 gap-4 items-baseline">
                   <div className="md:col-span-1 text-[#04467A] font-bold text-xl sm:text-2xl">

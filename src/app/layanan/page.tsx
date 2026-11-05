@@ -5,6 +5,10 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { COMPANY_PROFILE, SERVICES } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
+import { PortableText } from '@/components/PortableText';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import { SERVICES_QUERY, type SanityService } from '@/sanity/lib/queries';
+import { urlForImage } from '@/sanity/lib/image';
 
 export const metadata: Metadata = {
   title: `Layanan Kami | ${COMPANY_PROFILE.shortName}`,
@@ -21,7 +25,33 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LayananPage() {
+export default async function LayananPage() {
+  const sanityServices = await sanityFetch<SanityService[]>({
+    query: SERVICES_QUERY,
+    tags: ['service'],
+  });
+
+  const servicesList =
+    sanityServices && sanityServices.length > 0
+      ? sanityServices.map((s, idx) => ({
+          id: s._id,
+          number: String(idx + 1).padStart(2, '0'),
+          title: s.title,
+          summary: s.shortDescription || '',
+          description: s.description,
+          image: s.image
+            ? urlForImage(s.image).url()
+            : SERVICES[idx % SERVICES.length].image,
+        }))
+      : SERVICES.map((s) => ({
+          id: s.id,
+          number: s.number,
+          title: s.title,
+          summary: s.summary,
+          description: null,
+          image: s.image,
+        }));
+
   return (
     <div className="flex flex-col w-full">
       {/* 1. Page Header Band */}
@@ -51,7 +81,7 @@ export default function LayananPage() {
 
       {/* 2. Empat Section Layanan Zig-Zag */}
       <div className="flex flex-col w-full">
-        {SERVICES.map((service, index) => {
+        {servicesList.map((service, index) => {
           // Genap: index 0 (01) dan 2 (03) -> Background Putih, Foto Kiri, Teks Kanan
           // Ganjil: index 1 (02) dan 3 (04) -> Background #F5F8FD, Teks Kiri, Foto Kanan
           const isOddIndex = index % 2 === 1;
@@ -111,9 +141,15 @@ export default function LayananPage() {
                     </MotionWrapper>
 
                     <MotionWrapper delay={0.25}>
-                      <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6">
-                        {service.summary}
-                      </p>
+                      {service.description && service.description.length > 0 ? (
+                        <div className="mb-6">
+                          <PortableText value={service.description} />
+                        </div>
+                      ) : (
+                        <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6">
+                          {service.summary}
+                        </p>
+                      )}
                     </MotionWrapper>
 
                     <MotionWrapper delay={0.3}>

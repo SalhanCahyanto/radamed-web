@@ -4,8 +4,18 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { COMPANY_PROFILE, SERVICES } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
+import type { SanityCompanyProfile } from '@/sanity/lib/queries';
+import { urlForImage } from '@/sanity/lib/image';
 
-export const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  profile?: SanityCompanyProfile | null;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ profile }) => {
+  const headline = profile?.title || `${COMPANY_PROFILE.positioning}.`;
+  const intro = profile?.intro || 'Layanan instalasi, perawatan, dan perbaikan alat kesehatan dengan spesialisasi radiologi.';
+  const heroImageSrc = profile?.heroImage ? urlForImage(profile.heroImage).url() : SERVICES[0].image;
+
   return (
     <section
       className="w-full relative overflow-hidden pt-12 pb-16 lg:pt-16 lg:pb-20 text-white"
@@ -23,13 +33,13 @@ export const HeroSection: React.FC = () => {
                 className="text-3xl sm:text-4xl lg:text-[42px] lg:leading-[50px] font-bold text-white tracking-tight mb-4"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                {COMPANY_PROFILE.positioning}.
+                {headline}
               </h1>
             </MotionWrapper>
 
             <MotionWrapper delay={0.1}>
               <p className="text-base sm:text-lg text-white/85 max-w-xl mb-8 leading-relaxed">
-                Layanan instalasi, perawatan, dan perbaikan alat kesehatan dengan spesialisasi radiologi.
+                {intro}
               </p>
             </MotionWrapper>
 
@@ -58,30 +68,29 @@ export const HeroSection: React.FC = () => {
             <MotionWrapper delay={0.2} className="w-full">
               <div className="w-full flex flex-wrap items-center text-white/90 text-sm sm:text-base border-t border-white/20 pt-6">
                 {COMPANY_PROFILE.metrics.map((metric, idx) => (
-                  <div
-                    key={metric.label}
-                    className={`py-1 ${
-                      idx === 0
-                        ? 'pr-6 sm:pr-8'
-                        : idx === COMPANY_PROFILE.metrics.length - 1
-                        ? 'pl-6 sm:pl-8'
-                        : 'px-6 sm:px-8 border-x border-white/25'
-                    }`}
-                  >
-                    <span className="font-semibold text-white">{metric.label}</span>
-                  </div>
+                  <React.Fragment key={metric.label}>
+                    <div className="flex items-center py-1">
+                      <span className="font-bold text-white mr-1.5">{metric.value}</span>
+                      <span className="text-white/80 font-normal">{metric.label}</span>
+                    </div>
+                    {idx < COMPANY_PROFILE.metrics.length - 1 && (
+                      <span className="mx-3.5 text-white/40 font-light select-none" aria-hidden="true">
+                        |
+                      </span>
+                    )}
+                  </React.Fragment>
                 ))}
               </div>
             </MotionWrapper>
           </div>
 
-          {/* Kolom Kanan: Foto Alat Radiologi */}
-          <div className="lg:col-span-6 flex flex-col">
+          {/* Kolom Kanan: Foto Ruang Radiologi */}
+          <div className="lg:col-span-6">
             <MotionWrapper delay={0.25}>
-              <div className="relative w-full aspect-[16/10] overflow-hidden rounded-2xl shadow-2xl border border-white/15 bg-slate-900">
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
                 <Image
-                  src={SERVICES[0].image}
-                  alt="Instalasi dan pengujian peralatan radiologi presisi tinggi"
+                  src={heroImageSrc}
+                  alt="Instalasi dan kalibrasi alat radiologi medis oleh engineer PT RADAMED"
                   fill
                   priority
                   className="object-cover"
@@ -95,4 +104,3 @@ export const HeroSection: React.FC = () => {
     </section>
   );
 };
-

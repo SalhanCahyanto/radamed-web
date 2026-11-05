@@ -6,6 +6,17 @@ import { PortfolioSection } from '@/components/home/PortfolioSection';
 import { AboutSection } from '@/components/home/AboutSection';
 import { CtaSection } from '@/components/home/CtaSection';
 import { COMPANY_PROFILE } from '@/data/mockData';
+import { sanityFetch } from '@/sanity/lib/fetch';
+import {
+  COMPANY_PROFILE_QUERY,
+  SERVICES_QUERY,
+  FEATURED_PROJECTS_QUERY,
+  SITE_SETTINGS_QUERY,
+  type SanityCompanyProfile,
+  type SanityService,
+  type SanityPortfolioProject,
+  type SanitySiteSettings,
+} from '@/sanity/lib/queries';
 
 export const metadata: Metadata = {
   title: `${COMPANY_PROFILE.positioning} | ${COMPANY_PROFILE.shortName}`,
@@ -20,23 +31,42 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [profile, services, featuredProjects, settings] = await Promise.all([
+    sanityFetch<SanityCompanyProfile>({
+      query: COMPANY_PROFILE_QUERY,
+      tags: ['companyProfile'],
+    }),
+    sanityFetch<SanityService[]>({
+      query: SERVICES_QUERY,
+      tags: ['service'],
+    }),
+    sanityFetch<SanityPortfolioProject[]>({
+      query: FEATURED_PROJECTS_QUERY,
+      tags: ['portfolioProject'],
+    }),
+    sanityFetch<SanitySiteSettings>({
+      query: SITE_SETTINGS_QUERY,
+      tags: ['siteSettings'],
+    }),
+  ]);
+
   return (
     <div className="flex flex-col w-full">
       {/* 1. Hero Section (#0B2343 Gradient) */}
-      <HeroSection />
+      <HeroSection profile={profile} />
 
       {/* 2. Layanan Kami (#FFFFFF) */}
-      <ServicesSection />
+      <ServicesSection services={services} />
 
       {/* 3. Pekerjaan Kami (#F5F8FD Bento Grid) */}
-      <PortfolioSection />
+      <PortfolioSection projects={featuredProjects} />
 
       {/* 4. Pengenalan Singkat (#FFFFFF + 5 Nilai Perusahaan) */}
-      <AboutSection />
+      <AboutSection profile={profile} />
 
       {/* 5. Bottom CTA Section (#0B2343 Band) */}
-      <CtaSection />
+      <CtaSection settings={settings} />
     </div>
   );
 }

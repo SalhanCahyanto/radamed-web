@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import { PORTFOLIO_PROJECTS, PortfolioItem } from '@/data/mockData';
+import { PORTFOLIO_PROJECTS, type PortfolioItem } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
 
 const FILTER_TABS = [
@@ -15,13 +15,19 @@ const FILTER_TABS = [
   { label: 'Renovasi', value: 'renovasi' },
 ];
 
-export const PortfolioClient: React.FC = () => {
+interface PortfolioClientProps {
+  initialProjects?: PortfolioItem[];
+}
+
+export const PortfolioClient: React.FC<PortfolioClientProps> = ({
+  initialProjects = PORTFOLIO_PROJECTS,
+}) => {
   const [activeFilter, setActiveFilter] = useState('all');
 
   const filteredProjects =
     activeFilter === 'all'
-      ? PORTFOLIO_PROJECTS
-      : PORTFOLIO_PROJECTS.filter((p) => p.categorySlug === activeFilter);
+      ? initialProjects
+      : initialProjects.filter((p) => p.categorySlug === activeFilter);
 
   return (
     <div className="w-full">
@@ -56,7 +62,7 @@ export const PortfolioClient: React.FC = () => {
       {/* Projects Grid: 3 cols desktop, 2 cols tablet, 1 col mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredProjects.map((project: PortfolioItem, index: number) => (
-          <MotionWrapper key={project.id} delay={0.05 * (index % 6)}>
+          <MotionWrapper key={project.id || project.slug} delay={0.05 * (index % 6)}>
             <Link
               href={`/portfolio/${project.slug}`}
               className="portfolio-item group bg-white rounded-xl overflow-hidden flex flex-col border border-[#DCE5F0] shadow-sm hover:shadow-md transition-all duration-300 h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#04467A]"

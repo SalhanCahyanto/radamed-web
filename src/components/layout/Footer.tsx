@@ -3,8 +3,22 @@ import Link from 'next/link';
 import { Phone, Mail, MapPin } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
 import { NAV_LINKS, SERVICES, COMPANY_PROFILE } from '@/data/mockData';
+import type { SanitySiteSettings } from '@/sanity/lib/queries';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  settings?: SanitySiteSettings | null;
+}
+
+export const Footer: React.FC<FooterProps> = ({ settings }) => {
+  const tagline = settings?.tagline || COMPANY_PROFILE.tagline;
+  const phone = settings?.phone || COMPANY_PROFILE.contact.phoneDisplay;
+  const phoneRaw = settings?.phone
+    ? settings.phone.replace(/[^0-9+]/g, '')
+    : COMPANY_PROFILE.contact.phoneRaw;
+  const email = settings?.email || COMPANY_PROFILE.contact.email;
+  const address = settings?.address || COMPANY_PROFILE.contact.address;
+  const companyName = settings?.companyName || COMPANY_PROFILE.legalName;
+
   return (
     <footer
       className="w-full text-white pt-16 pb-12 border-t border-[#04467A]/30"
@@ -26,7 +40,7 @@ export const Footer: React.FC = () => {
               className="text-base sm:text-lg font-semibold text-white tracking-tight mb-2.5"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
-              {COMPANY_PROFILE.tagline}
+              {tagline}
             </div>
             <p className="text-sm text-slate-300 leading-relaxed max-w-sm">
               {COMPANY_PROFILE.footerDescription}
@@ -91,10 +105,10 @@ export const Footer: React.FC = () => {
                 <div>
                   <span className="block text-white font-medium text-xs">Telepon:</span>
                   <a
-                    href={`tel:${COMPANY_PROFILE.contact.phoneRaw}`}
+                    href={`tel:${phoneRaw}`}
                     className="hover:text-white transition-colors focus-visible:outline-none focus-visible:underline"
                   >
-                    {COMPANY_PROFILE.contact.phoneDisplay}
+                    {phone}
                   </a>
                 </div>
               </div>
@@ -104,10 +118,10 @@ export const Footer: React.FC = () => {
                 <div>
                   <span className="block text-white font-medium text-xs">Email:</span>
                   <a
-                    href={`mailto:${COMPANY_PROFILE.contact.email}`}
+                    href={`mailto:${email}`}
                     className="hover:text-white transition-colors break-all focus-visible:outline-none focus-visible:underline"
                   >
-                    {COMPANY_PROFILE.contact.email}
+                    {email}
                   </a>
                 </div>
               </div>
@@ -117,7 +131,7 @@ export const Footer: React.FC = () => {
                 <div>
                   <span className="block text-white font-medium text-xs">Alamat Kantor:</span>
                   <address className="not-italic text-slate-300 leading-relaxed text-xs">
-                    {COMPANY_PROFILE.contact.address}
+                    {address}
                   </address>
                 </div>
               </div>
@@ -127,11 +141,10 @@ export const Footer: React.FC = () => {
 
         {/* Baris Bawah: Hak Cipta */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>{COMPANY_PROFILE.copyright}</p>
+          <p>© {new Date().getFullYear()} {companyName}. Hak cipta dilindungi undang-undang.</p>
           <p className="text-slate-400">Semarang, Jawa Tengah, Indonesia</p>
         </div>
       </div>
     </footer>
   );
 };
-
