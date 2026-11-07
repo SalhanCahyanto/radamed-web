@@ -62,6 +62,12 @@ export interface SanityGalleryItem {
   caption?: string;
 }
 
+export interface SanitySitemapProject {
+  slug: string;
+  projectDate?: string;
+  _updatedAt?: string;
+}
+
 export interface SanityPortfolioProject {
   _id: string;
   title: string;
@@ -193,4 +199,13 @@ export const OTHER_PROJECTS_QUERY = groq`
 // 8. ALL_PROJECT_SLUGS_QUERY
 export const ALL_PROJECT_SLUGS_QUERY = groq`
   *[_type == "portfolioProject" && published == true && defined(slug.current)][].slug.current
+`;
+
+// 9. SITEMAP_PROJECTS_QUERY
+export const SITEMAP_PROJECTS_QUERY = groq`
+  *[_type == "portfolioProject" && published == true && defined(slug.current)] {
+    "slug": slug.current,
+    projectDate,
+    _updatedAt
+  }
 `;

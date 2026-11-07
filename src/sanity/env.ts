@@ -7,3 +7,5 @@ export const dataset =
 export const projectId =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '';
 
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://radamed-web.vercel.app';
