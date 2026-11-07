@@ -20,7 +20,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ projects }) 
         title: projects[0].title,
         facility: projects[0].clientName,
         category: projects[0].serviceCategory,
-        image: projects[0].coverImage ? urlForImage(projects[0].coverImage).url() : PORTFOLIO_PROJECTS[0].coverImage,
+        image: projects[0].coverImage?.asset ? urlForImage(projects[0].coverImage).url() : PORTFOLIO_PROJECTS[0].coverImage,
       }
     : {
         slug: PORTFOLIO_PROJECTS[0].slug,
@@ -31,12 +31,12 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ projects }) 
       };
 
   const secondaryProjects = hasSanity
-    ? projects.slice(1, 3).map((p) => ({
+    ? projects.slice(1, 3).map((p, idx) => ({
         slug: p.slug.current,
         title: p.title,
         facility: p.clientName,
         category: p.serviceCategory,
-        image: p.coverImage ? urlForImage(p.coverImage).url() : PORTFOLIO_PROJECTS[1].coverImage,
+        image: p.coverImage?.asset ? urlForImage(p.coverImage).url() : PORTFOLIO_PROJECTS[idx + 1].coverImage,
       }))
     : PORTFOLIO_PROJECTS.slice(1, 3).map((p) => ({
         slug: p.slug,

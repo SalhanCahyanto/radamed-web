@@ -121,7 +121,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
   const projectSummary = sanityProject ? sanityProject.excerpt : mockProject!.summary;
   const projectFacility = sanityProject ? sanityProject.clientName : mockProject!.facility;
   const projectCategory = sanityProject ? sanityProject.serviceCategory : mockProject!.category;
-  const projectCover = sanityProject && sanityProject.coverImage
+  const projectCover = sanityProject && sanityProject.coverImage?.asset
     ? urlForImage(sanityProject.coverImage).url()
     : mockProject!.coverImage;
 

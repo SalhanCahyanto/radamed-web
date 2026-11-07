@@ -14,7 +14,9 @@ interface HeroSectionProps {
 export const HeroSection: React.FC<HeroSectionProps> = ({ profile }) => {
   const headline = profile?.title || `${COMPANY_PROFILE.positioning}.`;
   const intro = profile?.intro || 'Layanan instalasi, perawatan, dan perbaikan alat kesehatan dengan spesialisasi radiologi.';
-  const heroImageSrc = profile?.heroImage ? urlForImage(profile.heroImage).url() : SERVICES[0].image;
+  const heroImageSrc = profile?.heroImage?.asset
+    ? urlForImage(profile.heroImage).url()
+    : SERVICES[0].image;
 
   return (
     <section
@@ -70,8 +72,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ profile }) => {
                 {COMPANY_PROFILE.metrics.map((metric, idx) => (
                   <React.Fragment key={metric.label}>
                     <div className="flex items-center py-1">
-                      <span className="font-bold text-white mr-1.5">{metric.value}</span>
-                      <span className="text-white/80 font-normal">{metric.label}</span>
+                      <span className="font-semibold text-white">{metric.label}</span>
                     </div>
                     {idx < COMPANY_PROFILE.metrics.length - 1 && (
                       <span className="mx-3.5 text-white/40 font-light select-none" aria-hidden="true">

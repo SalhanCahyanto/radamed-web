@@ -39,7 +39,7 @@ export default async function LayananPage() {
           title: s.title,
           summary: s.shortDescription || '',
           description: s.description,
-          image: s.image
+          image: s.image?.asset
             ? urlForImage(s.image).url()
             : SERVICES[idx % SERVICES.length].image,
         }))

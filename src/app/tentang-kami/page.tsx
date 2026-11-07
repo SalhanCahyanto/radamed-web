@@ -58,7 +58,7 @@ export default async function TentangKamiPage() {
         }))
       : COMPANY_PROFILE.values;
 
-  const imageSrc = profile?.heroImage
+  const imageSrc = profile?.heroImage?.asset
     ? urlForImage(profile.heroImage).url()
     : SERVICES[2].image;
 

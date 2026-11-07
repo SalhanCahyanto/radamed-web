@@ -45,7 +45,7 @@ export default async function PortfolioPage() {
           categorySlug: categorySlugMap[p.serviceCategory] || 'instalasi-alat',
           facility: p.clientName,
           summary: p.excerpt,
-          coverImage: p.coverImage
+          coverImage: p.coverImage?.asset
             ? urlForImage(p.coverImage).url()
             : PORTFOLIO_PROJECTS[0].coverImage,
           scopeOfWork: [],
