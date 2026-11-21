@@ -97,7 +97,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ projects }) 
 
                   {/* Konten Kartu */}
                   <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 flex flex-col justify-end text-white">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                       <span className="inline-block px-2.5 py-1 bg-[#04467A] text-white text-xs font-semibold rounded uppercase tracking-wider">
                         {mainProject.category}
                       </span>
@@ -137,7 +137,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ projects }) 
 
                   {/* Konten Kartu */}
                   <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 flex flex-col justify-end text-white">
-                    <div className="flex items-center gap-2 mb-1.5">
+                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
                       <span className="inline-block px-2 py-0.5 bg-[#04467A] text-white text-[11px] font-semibold rounded uppercase tracking-wider">
                         {project.category}
                       </span>
@@ -146,7 +146,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ projects }) 
                       </span>
                     </div>
                     <h3
-                      className="text-lg sm:text-xl font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-1"
+                      className="text-lg sm:text-xl font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-2"
                       style={{ fontFamily: 'var(--font-heading)' }}
                     >
                       {project.title}

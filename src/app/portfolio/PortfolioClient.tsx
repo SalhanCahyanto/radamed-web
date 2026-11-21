@@ -24,6 +24,10 @@ export const PortfolioClient: React.FC<PortfolioClientProps> = ({
 }) => {
   const [activeFilter, setActiveFilter] = useState('all');
 
+  const availableTabs = FILTER_TABS.filter(
+    (tab) => tab.value === 'all' || initialProjects.some((p) => p.categorySlug === tab.value)
+  );
+
   const filteredProjects =
     activeFilter === 'all'
       ? initialProjects
@@ -37,7 +41,7 @@ export const PortfolioClient: React.FC<PortfolioClientProps> = ({
         aria-label="Filter Kategori Portofolio"
         className="flex items-center gap-6 sm:gap-8 overflow-x-auto pb-2 mb-10 select-none border-b border-[#DCE5F0]"
       >
-        {FILTER_TABS.map((tab) => {
+        {availableTabs.map((tab) => {
           const isActive = activeFilter === tab.value;
           return (
             <button
@@ -59,52 +63,68 @@ export const PortfolioClient: React.FC<PortfolioClientProps> = ({
         })}
       </div>
 
-      {/* Projects Grid: 3 cols desktop, 2 cols tablet, 1 col mobile */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredProjects.map((project: PortfolioItem, index: number) => (
-          <MotionWrapper key={project.id || project.slug} delay={0.05 * (index % 6)}>
-            <Link
-              href={`/portfolio/${project.slug}`}
-              className="portfolio-item group bg-white rounded-xl overflow-hidden flex flex-col border border-[#DCE5F0] shadow-sm hover:shadow-md transition-all duration-300 h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#04467A]"
-            >
-              {/* Cover Image */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 rounded-t-xl">
-                <Image
-                  src={project.coverImage}
-                  alt={project.title}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-              </div>
-
-              {/* Card Content */}
-              <div className="p-6 flex flex-col justify-between flex-1">
-                <div className="flex flex-col">
-                  <span className="text-[#04467A] text-[12px] font-semibold uppercase tracking-wider mb-2">
-                    {project.category}
-                  </span>
-                  <h2
-                    className="text-[#0B2343] text-lg font-bold group-hover:text-[#04467A] transition-colors mb-2 tracking-tight"
-                    style={{ fontFamily: 'var(--font-heading)' }}
-                  >
-                    {project.title}
-                  </h2>
-                  <p className="text-slate-600 text-sm leading-relaxed">
-                    {project.summary}
-                  </p>
+      {/* Projects Grid or Empty State */}
+      {filteredProjects.length === 0 ? (
+        <div className="bg-white border border-[#DCE5F0] rounded-xl p-10 text-center">
+          <p className="text-slate-600 text-base mb-4">
+            Belum ada dokumentasi proyek pada kategori ini.
+          </p>
+          <button
+            type="button"
+            onClick={() => setActiveFilter('all')}
+            className="inline-flex items-center justify-center px-5 py-2.5 bg-[#04467A] text-white text-sm font-semibold rounded-lg hover:bg-[#0B2343] transition-colors cursor-pointer"
+            style={{ fontFamily: 'var(--font-heading)' }}
+          >
+            Tampilkan semua portofolio
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProjects.map((project: PortfolioItem, index: number) => (
+            <MotionWrapper key={project.id || project.slug} delay={0.05 * (index % 6)}>
+              <Link
+                href={`/portfolio/${project.slug}`}
+                className="portfolio-item group bg-white rounded-xl overflow-hidden flex flex-col border border-[#DCE5F0] shadow-sm hover:shadow-md transition-all duration-300 h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#04467A]"
+              >
+                {/* Cover Image */}
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 rounded-t-xl">
+                  <Image
+                    src={project.coverImage}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
                 </div>
 
-                <div className="pt-4 flex justify-end items-center">
-                  <span className="text-slate-400 group-hover:text-[#04467A] group-hover:translate-x-1 transition-all">
-                    <ArrowRight className="w-5 h-5" aria-hidden="true" />
-                  </span>
+                {/* Card Content */}
+                <div className="p-6 flex flex-col justify-between flex-1">
+                  <div className="flex flex-col">
+                    <span className="text-[#04467A] text-[12px] font-semibold uppercase tracking-wider mb-2">
+                      {project.category}
+                    </span>
+                    <h2
+                      className="text-[#0B2343] text-lg font-bold group-hover:text-[#04467A] transition-colors mb-2 tracking-tight"
+                      style={{ fontFamily: 'var(--font-heading)' }}
+                    >
+                      {project.title}
+                    </h2>
+                    <p className="text-slate-600 text-sm leading-relaxed">
+                      {project.summary}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 flex justify-end items-center">
+                    <span className="text-slate-400 group-hover:text-[#04467A] group-hover:translate-x-1 transition-all">
+                      <ArrowRight className="w-5 h-5" aria-hidden="true" />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          </MotionWrapper>
-        ))}
-      </div>
+              </Link>
+            </MotionWrapper>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

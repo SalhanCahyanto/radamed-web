@@ -132,12 +132,14 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
     'Pelatihan operasional bagi tenaga medis rumah sakit',
   ];
 
-  const galleryItems = sanityProject?.gallery && sanityProject.gallery.length > 0
-    ? sanityProject.gallery.map((item) => ({
-        url: urlForImage(item.image).url(),
-        caption: item.caption || item.altText || projectTitle,
-      }))
-    : mockProject?.gallery || [];
+  const galleryItems: Array<{ url: string; caption: string; aspect?: 'landscape' | 'portrait' }> =
+    sanityProject?.gallery && sanityProject.gallery.length > 0
+      ? sanityProject.gallery.map((item) => ({
+          url: urlForImage(item.image).url(),
+          caption: item.caption || item.altText || projectTitle,
+          aspect: 'landscape',
+        }))
+      : mockProject?.gallery || [];
 
   const otherProjects = sanityOthers && sanityOthers.length > 0
     ? sanityOthers.map((o) => ({
@@ -328,22 +330,28 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
               </h2>
             </MotionWrapper>
 
-            {/* Asymmetric Gallery Layout */}
+            {/* Asymmetric Gallery Layout (Top 3 Featured Photos) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* Foto Besar Kolom Kiri (7 Kolom) */}
               {galleryItems[0] && (
                 <div className="lg:col-span-7 flex flex-col">
                   <MotionWrapper delay={0.1}>
-                    <div className="relative w-full h-[320px] sm:h-[400px] rounded-xl overflow-hidden bg-slate-100 border border-[#DCE5F0] shadow-sm">
+                    <div
+                      className={`relative w-full h-[320px] sm:h-[400px] rounded-xl overflow-hidden border border-[#DCE5F0] shadow-sm ${
+                        galleryItems[0].aspect === 'portrait' ? 'bg-[#F5F8FD]' : 'bg-slate-100'
+                      }`}
+                    >
                       <Image
                         src={galleryItems[0].url}
                         alt={galleryItems[0].caption || projectTitle}
                         fill
-                        className="object-cover"
+                        className={
+                          galleryItems[0].aspect === 'portrait' ? 'object-contain p-2' : 'object-cover'
+                        }
                         sizes="(max-width: 1024px) 100vw, 60vw"
                       />
                     </div>
-                    <span className="text-xs text-slate-500 mt-2 font-normal">
+                    <span className="text-xs text-slate-500 mt-2 font-normal leading-relaxed block">
                       {galleryItems[0].caption}
                     </span>
                   </MotionWrapper>
@@ -355,16 +363,22 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 {galleryItems.slice(1, 3).map((item, idx) => (
                   <div key={idx} className="flex flex-col">
                     <MotionWrapper delay={0.15 + idx * 0.05}>
-                      <div className="relative w-full h-[180px] sm:h-[188px] rounded-xl overflow-hidden bg-slate-100 border border-[#DCE5F0] shadow-sm">
+                      <div
+                        className={`relative w-full h-[180px] sm:h-[188px] rounded-xl overflow-hidden border border-[#DCE5F0] shadow-sm ${
+                          item.aspect === 'portrait' ? 'bg-[#F5F8FD]' : 'bg-slate-100'
+                        }`}
+                      >
                         <Image
                           src={item.url}
                           alt={item.caption || projectTitle}
                           fill
-                          className="object-cover"
+                          className={
+                            item.aspect === 'portrait' ? 'object-contain p-2' : 'object-cover'
+                          }
                           sizes="(max-width: 1024px) 100vw, 40vw"
                         />
                       </div>
-                      <span className="text-xs text-slate-500 mt-1.5 font-normal">
+                      <span className="text-xs text-slate-500 mt-1.5 font-normal leading-relaxed block">
                         {item.caption}
                       </span>
                     </MotionWrapper>
@@ -372,6 +386,46 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 ))}
               </div>
             </div>
+
+            {/* Dokumentasi Tahapan Pekerjaan Lengkap Lainnya */}
+            {galleryItems.length > 3 && (
+              <div className="mt-10 pt-10 border-t border-[#DCE5F0]">
+                <MotionWrapper delay={0.1}>
+                  <h3
+                    className="text-lg sm:text-xl font-bold text-[#0B2343] mb-6 tracking-tight"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
+                    Dokumentasi Tahapan Pekerjaan ({galleryItems.length - 3} Foto Lainnya)
+                  </h3>
+                </MotionWrapper>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {galleryItems.slice(3).map((item, idx) => (
+                    <div key={idx} className="flex flex-col">
+                      <MotionWrapper delay={0.05 * (idx % 6)}>
+                        <div
+                          className={`relative aspect-[4/3] w-full rounded-xl overflow-hidden border border-[#DCE5F0] shadow-sm ${
+                            item.aspect === 'portrait' ? 'bg-[#F5F8FD]' : 'bg-slate-100'
+                          }`}
+                        >
+                          <Image
+                            src={item.url}
+                            alt={item.caption || projectTitle}
+                            fill
+                            className={
+                              item.aspect === 'portrait' ? 'object-contain p-2' : 'object-cover'
+                            }
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                        </div>
+                        <p className="text-xs text-slate-500 mt-2 font-normal leading-relaxed">
+                          {item.caption}
+                        </p>
+                      </MotionWrapper>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -405,8 +459,12 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             </MotionWrapper>
           </div>
 
-          {/* Grid 3 Proyek Terkait */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {/* Grid Proyek Terkait */}
+          <div
+            className={`grid grid-cols-1 gap-6 sm:gap-8 ${
+              otherProjects.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'
+            }`}
+          >
             {otherProjects.map((other, idx) => (
               <MotionWrapper key={other.id || other.slug} delay={0.1 + idx * 0.05}>
                 <Link

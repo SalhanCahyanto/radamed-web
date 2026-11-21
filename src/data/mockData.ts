@@ -29,6 +29,7 @@ export interface ServiceItem {
 export interface GalleryItem {
   url: string;
   caption: string;
+  aspect?: 'landscape' | 'portrait';
 }
 
 export interface PortfolioItem {
@@ -70,6 +71,9 @@ export interface CompanyProfile {
   aboutStory: string;
   footerDescription: string;
   copyright: string;
+  heroImage: string;
+  aboutImage: string;
+  aboutPortraitImage: string;
   metrics: MetricItem[];
   vision: string;
   mission: string;
@@ -100,6 +104,9 @@ export const COMPANY_PROFILE: CompanyProfile = {
   footerDescription:
     'Mitra terpercaya instalasi, pemeliharaan, dan perbaikan alat elektromedis serta renovasi ruang medis fasilitas kesehatan di Indonesia.',
   copyright: '© PT Rahardia Abadi Medika. Seluruh hak cipta dilindungi undang-undang.',
+  heroImage: '/images/portfolio/rsud-merah-putih-magelang/ruang-panel-dan-pintu-dalam.jpeg',
+  aboutImage: '/images/portfolio/rsud-margono-soekarjo/pemasangan-panel-dinding-timbal.jpeg',
+  aboutPortraitImage: '/images/portfolio/rsud-kardinah-tegal/instalasi-kabel-daya-dan-stopkontak.jpeg',
   metrics: [
     {
       value: '3 Engineer',
@@ -171,9 +178,8 @@ export const SERVICES: ServiceItem[] = [
     slug: 'konsultasi-dan-instalasi',
     summary: 'Pendampingan kebutuhan pengguna serta instalasi alat dan ruang medis sesuai standar yang dibutuhkan.',
     fullDescription:
-      'Pendampingan menyeluruh mulai dari asesmen kebutuhan teknis, perencanaan kelayakan tata ruang medis, hingga pelaksanaan instalasi elektromedis yang presisi dan sesuai regulasi keselamatan kerja klinis.',
-    image:
-      'https://lh3.googleusercontent.com/aida/AEtjO1UVSF3VNnSxpyCKe19BUcteahIk_Z0LgHIsol8y83bjYENvklBRWDN9SjHaTes4EB0T8ueFu75o8NkeotvyDyHanxPJNMP-ed7wauuCABnc4qqKouIxCE-7P5JFYRqoRgaABf0idg1Zf6TEyPDQ5P2zIebDdsDLJ7R3K22WajqtCaxyYe0Y_E-vmCiOPc1vDVAvHd-2ngBcjV4icsCKpQ3SNsehB-rWcfASPjlwA_JqD3-d54-K_oyazmYK',
+      'Pendampingan mulai dari asesmen kebutuhan teknis, perencanaan tata ruang proteksi radiasi, pemasangan panel daya, hingga instalasi pintu dan perangkat ruang medis sesuai ketentuan keselamatan fasilitas kesehatan.',
+    image: '/images/portfolio/rsud-merah-putih-magelang/ruang-panel-dan-pintu-dalam.jpeg',
   },
   {
     id: 'srv-2',
@@ -182,9 +188,8 @@ export const SERVICES: ServiceItem[] = [
     slug: 'maintenance-preventif',
     summary: 'Pemeliharaan berkala agar peralatan kesehatan tetap berfungsi optimal dan aman digunakan.',
     fullDescription:
-      'Program pemeliharaan terjadwal untuk mendeteksi potensi degradasi komponen sebelum menimbulkan kegagalan fungsi klinis, menjaga akurasi kalibrasi, serta memperpanjang usia pakai aset alat kesehatan.',
-    image:
-      'https://lh3.googleusercontent.com/aida/AEtjO1V50hRYm4JnnaFmf7nHmcp85x6FjbckHoSpVUd_BUxt_gfFZ_FsrPNwQ87gx-vypYKFaZNBiLSJNpB-3SKJ4dPqVLgs8ikgurYO_zg7Yg646I-GgHgJO2C2ZSRu4oD_1dPzqanuyh0bYfvrTVUidc19EDUzGta5BtY8WFQ5nDTPAvQhmCZm3WQwbx84XI0rv3wsktLFkzrgbpAZUGKWigyzkx-JuegYCW4ySvmwP4MCZzaJ0dZJv_YVndI',
+      'Pemeriksaan terjadwal pada komponen mekanik, kelistrikan, pintu pelindung radiasi, dan instrumen penunjang ruang pemeriksaan agar peralatan tetap siap pakai dan akurat.',
+    image: '/images/portfolio/rsud-merah-putih-magelang/pintu-anti-radiasi.jpeg',
   },
   {
     id: 'srv-3',
@@ -193,9 +198,8 @@ export const SERVICES: ServiceItem[] = [
     slug: 'service-dan-troubleshooting',
     summary: 'Identifikasi gangguan dan perbaikan peralatan kesehatan, dengan pengalaman di bidang radiologi dan berbagai jenis alat.',
     fullDescription:
-      'Layanan tanggap perbaikan kerusakan unit alat kesehatan dengan diagnosis elektrik, mekanik, maupun perangkat lunak biomedis yang akurat, didukung ketersediaan suku cadang berkualitas.',
-    image:
-      'https://lh3.googleusercontent.com/aida/AEtjO1VUtMRb4E6APGHHBvw1x6CbYpEEGLwKvYlmXmVzF9XBd3myTJUixpJmec7L310G5rpMpxTkZqwBzXOF51VBAUxbZWZ4ih0IBsNu0xDoCShzuF36qBTqvFI4McOIFaCbKVavGYINURvcFzC3VwWYED6_IOtFdw1PJSqEQQijyx_44oZKvxsyISCxHpcan4QkymBmKowDcq2ofZFHG_Ba4uDzXpjoSxHRT2M75paKd6RwNPDny8YF4-D2BDBn',
+      'Penelusuran gangguan kelistrikan, kontrol panel, dan fungsi mekanis unit alat kesehatan maupun sistem instalasi ruang radiologi agar operasional kembali berjalan normal.',
+    image: '/images/portfolio/rsud-margono-soekarjo/instalasi-rangka-pintu-dan-panel-listrik.jpeg',
   },
   {
     id: 'srv-4',
@@ -204,216 +208,194 @@ export const SERVICES: ServiceItem[] = [
     slug: 'renovasi-fasilitas-medis',
     summary: 'Penataan dan renovasi ruang medis yang menyesuaikan kebutuhan pengguna dan peralatan.',
     fullDescription:
-      'Pekerjaan konstruksi, pelapisan timbal (Pb) proteksi radiasi, penyesuaian sistem kelistrikan berdaya tinggi, serta tata udara khusus untuk ruang radiologi, laboratorium, dan kamar operasi.',
-    image:
-      'https://lh3.googleusercontent.com/aida/AEtjO1W7uF3QFOI46Qw60h4PnUhiGUmKqzuTYPPsKKLCsoGR7XttaWH7jf5ytZo5oMqIms4CSvubUN9GKVnN9A_WMIppn1Z5BVUxUG-HQn9vvVGpy3yQkTTVh6JU81RmavSmo1NgDttb9kw65thTvdaEIrIScJS8k0alTEOB-JTdz9RvmYiDMuc98b7C2V8WYyUfpSXu9MD22rchzzO1X6FkpEBmmJc_RWkrMENf4K4XsgxdQmNb_iwqvU56ycyo',
+      'Pekerjaan renovasi ruang radiologi mencakup perakitan rangka metal, pelapisan lembaran timbal (Pb) proteksi radiasi, pembuatan pintu anti-radiasi, instalasi tata udara, kelistrikan, hingga finishing interior ruang.',
+    image: '/images/portfolio/rsud-merah-putih-magelang/interior-dinding-biru-dan-mural.jpeg',
   },
 ];
 
 export const PORTFOLIO_PROJECTS: PortfolioItem[] = [
   {
-    id: 'prj-1',
-    slug: 'instalasi-alat-radiologi',
-    title: 'Instalasi Alat Radiologi',
-    category: 'Instalasi Alat',
-    categorySlug: 'instalasi-alat',
-    facility: '[Nama fasilitas ditampilkan jika sudah diizinkan]',
-    summary: 'Dokumentasi instalasi alat radiologi berstandar rumah sakit.',
-    coverImage:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDaic6xvBX3slIobCvvsVOMgZb8aJE_Sn0SRwKkdi5zvQw1qEI9R0Cin57W5zANHsJAYjna5yUQUWa7GGL1gEB3dO6swtMWpocMBqQebfwPnN2dZLP84xrKEOjZJGpjFzO23WrmMxzcVMqjmtt3xzvTfcUDXGO2sMm_WJDGjyeBDS6KBJS0LusZgRhxGlGxMjQ0DncNCyEoquh_WmBoEqySWuqVuUF9nwu7O_5xXPge',
-    scopeOfWork: [
-      'Konsultasi kebutuhan teknis alat',
-      'Instalasi unit mesin radiologi',
-      'Penataan ruang pendukung dan uji fungsi',
-    ],
-    challenge:
-      'Penyesuaian infrastruktur eksisting ruang radiologi agar mampu menampung beban operasional alat serta memastikan stabilitas suplai daya bebas fluktuasi.',
-    solution:
-      'Pemeriksaan menyeluruh pada jalur transmisi daya, penambahan grounding khusus biomedis, dan kalibrasi posisi gantry sesuai protokol pabrikan.',
-    gallery: [
-      {
-        url: 'https://lh3.googleusercontent.com/aida/AEtjO1WYGWdY3F6UI8QsEsrq_mjjFTId4qpht9HdFvHlkHvPCEKuYQoPIzbw1X0CBxHNeU4C5ZbVgYuNBkuqvtI-36XEvM8bS3w7Lwl3wVOeTSXmRYOO4xYS5UVUCK0FB43_c4-XGiN1T8mFnMcN0mjFp_svbkBZuVOsLc6X32w6do9tBLU9Ky_GM3VkgA-Ef2f5cvwcayTWu_5IlFyzqEtvL1UryGZdPGQBCHYtZAtsAC47uxeV4KuE9KXibOwW',
-        caption: 'Pemasangan komponen mekanik alat radiologi utama',
-      },
-      {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBYn_ZLRmysywxT4zonZt98ngCWhQ7_PGc8Vc2x9OEUZma_E9JBJuWLmCFiohdeDX-DHpubBmEMCHZNz2Z3c7UnxjMSz9jUvkPKtf8f5C39fZEEmnWbCG1odRUHQMJpLyKuYoWpdGNJYInZE-IVie9Nn8N-iTQtmjjyfZ0BhGB4wD_so5hmD5nS0H0ZADDb-0ul45-HuLTGBnR62opEaxpFuDDjw57YWXfCHSA3KR1',
-        caption: 'Pemeriksaan teknis dan konektivitas kontrol sistem',
-      },
-      {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBUbCv5mqTqBzGy1Ap3hzpwWvNYkRj8j35eFKJfcC4AqKy7fBYy7kfG3IRTTONy_GkPRcuPqPDwO-kcHYhbSMvUwJlaZTCXPbYeVx1n9rV8S8x9Wa6X6OHWLh3-kL607V_2gva6tuoPxqE25JngrnDo8jO6kCG49fS_YBJ6WGDVShnGoJ-nvDBWeRSFiIUjFQrPBUMhYpqSQmbdB3pp643GQPTZIzod3-0G95K7Nz4K',
-        caption: 'Pengujian akhir kesiapan operasional klinis',
-      },
-    ],
-  },
-  {
-    id: 'prj-2',
-    slug: 'instalasi-ruang-radiologi',
-    title: 'Instalasi Ruang Radiologi',
+    id: 'prj-margono-soekarjo',
+    slug: 'renovasi-ruang-dan-pintu-anti-radiasi-rsud-prof-dr-margono-soekarjo',
+    title: 'Pembuatan Pintu & Renovasi Ruang Anti-Radiasi RSUD Prof. Dr. Margono Soekarjo',
     category: 'Instalasi Ruang',
     categorySlug: 'instalasi-ruang',
-    facility: '[Nama fasilitas ditampilkan jika sudah diizinkan]',
-    summary: 'Dokumentasi penataan ruang untuk penempatan alat radiologi.',
-    coverImage:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuC1cnNHT0UoiJRSHKluAenb8i78h_SHT9QoKw4JBn-gTXdgpgVfINqM0-JreejTvEeE35roFEkvfI_a-whxYYIlIuk5cG_84ul3Dsap9_Gq-g2xEK908HAMCtXUOH7iDrHyXA4l5VxhD96uU5YUJwcG6kO6B8gbweE9oT1akcaiKbV39dtzJE7wplL8MK8GxZux9WslT7Wt20YsN8tSOnb0EWDAmMzt28yzpqiGN14A',
+    facility: 'RSUD Prof. Dr. Margono Soekarjo',
+    summary:
+      'Pembuatan dan pemasangan pintu geser anti-radiasi, pelapisan lembaran timbal dinding penuh, penataan panel listrik, dan finishing interior ruang radiologi.',
+    coverImage: '/images/portfolio/rsud-margono-soekarjo/pemasangan-panel-dinding-timbal.jpeg',
     scopeOfWork: [
-      'Pemasangan proteksi radiasi Pb pada dinding dan pintu',
-      'Instalasi pendingin udara khusus ruang alat',
-      'Penataan konsol operator dan ruang pasien',
+      'Pembuatan, pemasangan, dan finishing pintu geser anti-radiasi berlapis timbal',
+      'Perakitan rangka hollow metal dan pelapisan lembaran timbal (Pb) dari lantai hingga plafon',
+      'Pemasangan boks panel listrik, jalur stopkontak dinding, lampu indikator radiasi, dan gauge kontrol',
+      'Penutupan papan pelapis, pendempulan sambungan, serta finishing wallcovering interior ruang',
     ],
     challenge:
-      'Ketebalan proteksi radiasi harus memenuhi standar ketat BAPETEN tanpa mengurangi luas ruang efektif gerak pasien.',
+      'Melapisi seluruh bidang dinding dan akses pintu dengan lembaran timbal (Pb) secara rapat di sekitar posisi unit pendingin udara, bukaan pintu geser berbobot berat, serta sejumlah titik kabel listrik.',
     solution:
-      'Pemasangan presisi lembaran timbal timbal-balik (interlocking lead sheets) dan uji densitas radiasi menyeluruh.',
+      'Tim RADAMED merakit rangka kisi baja ringan untuk menopang lembaran timbal dan papan penutup secara merata, menanam jalur kabel daya dan boks panel di sisi depan lapisan timbal agar proteksi tidak terputus, lalu menuntaskan pendempulan dan pemasangan wallcovering ruang.',
     gallery: [
       {
-        url: 'https://lh3.googleusercontent.com/aida/AEtjO1WhKY1h14NPua0C2pEcfFMR90m64pK3uLVfBBevZJH-zmYZNuUYCwf7tnLvVKFdQcpiZsPALQPsAuzxNIU9odSdWAOHKFya0j5srQEE26s8A-MwieluIJQeXFGmZCxJCKv2Z09Bv2VWCtS0A1DREKvhtCrvnkq_K_jRozuYiwTVob4AYGMxnpXeUFWqlMQXIIzDjZXJnQfz5XFd7ZReSOT-WKZMe8sRWkV9LNI8MHhV',
-        caption: 'Penataan interior dan dinding proteksi radiasi',
+        url: '/images/portfolio/rsud-margono-soekarjo/pemasangan-panel-dinding-timbal.jpeg',
+        caption: 'Tim teknisi memasang papan penutup dan mengerjakan tahap finishing di atas dinding yang telah dilapisi lembaran timbal anti-radiasi.',
+        aspect: 'landscape',
       },
       {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBYn_ZLRmysywxT4zonZt98ngCWhQ7_PGc8Vc2x9OEUZma_E9JBJuWLmCFiohdeDX-DHpubBmEMCHZNz2Z3c7UnxjMSz9jUvkPKtf8f5C39fZEEmnWbCG1odRUHQMJpLyKuYoWpdGNJYInZE-IVie9Nn8N-iTQtmjjyfZ0BhGB4wD_so5hmD5nS0H0ZADDb-0ul45-HuLTGBnR62opEaxpFuDDjw57YWXfCHSA3KR1',
-        caption: 'Pemasangan kaca intip timbal di ruang operator',
+        url: '/images/portfolio/rsud-margono-soekarjo/rangka-metal-dan-timbal-penuh.jpeg',
+        caption: 'Pemasangan rangka kisi metal dan pelapisan penuh lembaran timbal (Pb) dari lantai hingga batas plafon.',
+        aspect: 'landscape',
       },
       {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBUbCv5mqTqBzGy1Ap3hzpwWvNYkRj8j35eFKJfcC4AqKy7fBYy7kfG3IRTTONy_GkPRcuPqPDwO-kcHYhbSMvUwJlaZTCXPbYeVx1n9rV8S8x9Wa6X6OHWLh3-kL607V_2gva6tuoPxqE25JngrnDo8jO6kCG49fS_YBJ6WGDVShnGoJ-nvDBWeRSFiIUjFQrPBUMhYpqSQmbdB3pp643GQPTZIzod3-0G95K7Nz4K',
-        caption: 'Pengecekan final sirkulasi udara dan integrasi kabel',
+        url: '/images/portfolio/rsud-margono-soekarjo/instalasi-rangka-pintu-dan-panel-listrik.jpeg',
+        caption: 'Pemasangan rangka kusen pintu ruang radiologi lengkap dengan boks panel kontrol listrik dan titik jalur daya.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-margono-soekarjo/pintu-anti-radiasi.jpeg',
+        caption: 'Hasil akhir pembuatan dan pemasangan pintu geser anti-radiasi, lengkap dengan handle stainless steel, lampu indikator merah, dan dua gauge kontrol di atas kusen.',
+        aspect: 'portrait',
+      },
+      {
+        url: '/images/portfolio/rsud-margono-soekarjo/persiapan-material-timbal-dan-rangka.jpeg',
+        caption: 'Persiapan gulungan serta lembaran timbal (Pb) anti-radiasi, papan penutup, dan rangka hollow metal di area kerja.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-margono-soekarjo/pelapisan-lembaran-timbal-dinding.jpeg',
+        caption: 'Pelapisan lembaran timbal rapat sambungan pada bidang dinding dan penyesuaian di sekitar dudukan unit pendingin ruangan.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-margono-soekarjo/finishing-perekat-dinding-atas.jpeg',
+        caption: 'Aplikasi perekat dan perataan permukaan dinding bagian atas di atas lapisan timbal proteksi radiasi.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-margono-soekarjo/pendempulan-sambungan-dan-stopkontak.jpeg',
+        caption: 'Pendempulan sambungan papan penutup gypsum serta perapihan jalur kabel untuk titik stopkontak dinding.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-margono-soekarjo/persiapan-finishing-wallcovering.jpeg',
+        caption: 'Persiapan permukaan dinding rata dan lembar mural sebelum pemasangan pelapis interior ruang.',
+        aspect: 'portrait',
+      },
+      {
+        url: '/images/portfolio/rsud-margono-soekarjo/hasil-akhir-wallcovering-ruang.jpeg',
+        caption: 'Hasil akhir pemasangan wallcovering ruang pemeriksaan lengkap dengan penataan dua unit pendingin udara.',
+        aspect: 'portrait',
       },
     ],
   },
   {
-    id: 'prj-3',
-    slug: 'perbaikan-alat-kesehatan',
-    title: 'Perbaikan Alat Kesehatan',
-    category: 'Perbaikan',
-    categorySlug: 'perbaikan',
-    facility: '[Nama fasilitas ditampilkan jika sudah diizinkan]',
-    summary: 'Dokumentasi perbaikan modul dan kalibrasi unit peralatan kesehatan.',
-    coverImage:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCi4HLD4vuuKy_gM2IreJoPXEPdKo1Na-Je0fVaAIYdtoTJwXREVm5nIaU2UySg-vqBNZOd3LxNLDCWrjH-ju3RNeriiLi87QdGB948K91mYC5LnaadnQYLH_bHJu5xFSsvc1KbG6D3kqJuSSDq0fUWbRSPDJa5W86adPRlhBlettxkchCFszkGPreMVdmCD8V353C57_UJa9rSGclUx7BUM2pY8zRRCI8pe6O8CPv9',
-    scopeOfWork: [
-      'Biomedical diagnostic menyeluruh',
-      'Penggantian modul suplai daya elektrik',
-      'Kalibrasi ulang parameter alat kesehatan',
-    ],
-    challenge:
-      'Alat mengalami kendala intermiten yang sulit dideteksi pada sirkuit suplai tegangan tinggi.',
-    solution:
-      'Tracing sinyal menggunakan osiloskop diagnostik klinis dan penggantian komponen daya yang mengalami degradasi.',
-    gallery: [
-      {
-        url: 'https://lh3.googleusercontent.com/aida/AEtjO1Wy03r1s3xUy2uY6G37KUQz0NA_EYyBIDrcU2dtKXGoTm3-IDX7yEsdN_P4xFuj1yUvPbeG0HNCnfVgUNyul1hPD8bXLTzlg6mcxbgEv7fua-AgrIiu9yjUtioB9KBB8FOCWRRVM1UyQCv-nYfnZQs97jypdhuACJ0pAeCrGQgAPk8Y2qJX9gLqc_jOZB93ZNrLe2Tf2ZYpd0-pDFyltCnjklsBLfE55lWemC6W_fjQtQ',
-        caption: 'Pemeriksaan sirkuit dan pemecahan masalah modul daya',
-      },
-      {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBYn_ZLRmysywxT4zonZt98ngCWhQ7_PGc8Vc2x9OEUZma_E9JBJuWLmCFiohdeDX-DHpubBmEMCHZNz2Z3c7UnxjMSz9jUvkPKtf8f5C39fZEEmnWbCG1odRUHQMJpLyKuYoWpdGNJYInZE-IVie9Nn8N-iTQtmjjyfZ0BhGB4wD_so5hmD5nS0H0ZADDb-0ul45-HuLTGBnR62opEaxpFuDDjw57YWXfCHSA3KR1',
-        caption: 'Penggantian komponen cadangan elektrik',
-      },
-      {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBUbCv5mqTqBzGy1Ap3hzpwWvNYkRj8j35eFKJfcC4AqKy7fBYy7kfG3IRTTONy_GkPRcuPqPDwO-kcHYhbSMvUwJlaZTCXPbYeVx1n9rV8S8x9Wa6X6OHWLh3-kL607V_2gva6tuoPxqE25JngrnDo8jO6kCG49fS_YBJ6WGDVShnGoJ-nvDBWeRSFiIUjFQrPBUMhYpqSQmbdB3pp643GQPTZIzod3-0G95K7Nz4K',
-        caption: 'Uji kinerja beban setelah perbaikan selesai',
-      },
-    ],
-  },
-  {
-    id: 'prj-4',
-    slug: 'maintenance-alat-kesehatan',
-    title: 'Maintenance Alat Kesehatan',
-    category: 'Perbaikan',
-    categorySlug: 'perbaikan',
-    facility: '[Nama fasilitas ditampilkan jika sudah diizinkan]',
-    summary: 'Dokumentasi pemeliharaan berkala untuk menjamin akurasi dan kesiapan pakai alat.',
-    coverImage:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCMuCEs6d37t1eDg2Jb2Iq1pivuFFh-OQlOniIvlPpDekfeeQ5hm48JemwzmRutynbLlloVOezhkH53YoqzxexDJaqLqErHB_1MjeqGunQ7jM9IVstQS5dzfIO3-U_tgL2MDW7BFeAhh0_2-892V8vxUNviAVVnWhlHenPAJ1P0Gp551Xm7pYNfWp2U41zBtqeOawMeRgeGIr-cTGH4GeOKfsnGLDRgeCAjhIAQv7B0',
-    scopeOfWork: [
-      'Inspeksi fisik dan pembersihan sirkuit internal',
-      'Pengukuran parameter operasional dan arus bocor',
-      'Pembaruan kartu catatan pemeliharaan alat',
-    ],
-    challenge:
-      'Penjadwalan inspeksi rutin tanpa mengganggu alur pelayanan pasien di fasilitas kesehatan.',
-    solution:
-      'Eksekusi terstruktur di luar jam sibuk dengan checklist preventif standar pabrikan.',
-    gallery: [
-      {
-        url: 'https://lh3.googleusercontent.com/aida/AEtjO1VUtMRb4E6APGHHBvw1x6CbYpEEGLwKvYlmXmVzF9XBd3myTJUixpJmec7L310G5rpMpxTkZqwBzXOF51VBAUxbZWZ4ih0IBsNu0xDoCShzuF36qBTqvFI4McOIFaCbKVavGYINURvcFzC3VwWYED6_IOtFdw1PJSqEQQijyx_44oZKvxsyISCxHpcan4QkymBmKowDcq2ofZFHG_Ba4uDzXpjoSxHRT2M75paKd6RwNPDny8YF4-D2BDBn',
-        caption: 'Pembersihan dan pelumasan mekanisme gerak',
-      },
-      {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBYn_ZLRmysywxT4zonZt98ngCWhQ7_PGc8Vc2x9OEUZma_E9JBJuWLmCFiohdeDX-DHpubBmEMCHZNz2Z3c7UnxjMSz9jUvkPKtf8f5C39fZEEmnWbCG1odRUHQMJpLyKuYoWpdGNJYInZE-IVie9Nn8N-iTQtmjjyfZ0BhGB4wD_so5hmD5nS0H0ZADDb-0ul45-HuLTGBnR62opEaxpFuDDjw57YWXfCHSA3KR1',
-        caption: 'Pengukuran nilai parameter tegangan kerja',
-      },
-      {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBUbCv5mqTqBzGy1Ap3hzpwWvNYkRj8j35eFKJfcC4AqKy7fBYy7kfG3IRTTONy_GkPRcuPqPDwO-kcHYhbSMvUwJlaZTCXPbYeVx1n9rV8S8x9Wa6X6OHWLh3-kL607V_2gva6tuoPxqE25JngrnDo8jO6kCG49fS_YBJ6WGDVShnGoJ-nvDBWeRSFiIUjFQrPBUMhYpqSQmbdB3pp643GQPTZIzod3-0G95K7Nz4K',
-        caption: 'Dokumentasi lembar ceklis hasil preventif',
-      },
-    ],
-  },
-  {
-    id: 'prj-5',
-    slug: 'renovasi-ruang-medis',
-    title: 'Renovasi Ruang Medis',
+    id: 'prj-merah-putih-magelang',
+    slug: 'pintu-dan-ruang-anti-radiasi-rsud-merah-putih-magelang',
+    title: 'Pintu Anti-Radiasi & Renovasi Ruang Radiologi RSUD Merah Putih Kabupaten Magelang',
     category: 'Renovasi',
     categorySlug: 'renovasi',
-    facility: '[Nama fasilitas ditampilkan jika sudah diizinkan]',
-    summary: 'Dokumentasi penataan dan renovasi ruang medis fasilitas kesehatan.',
-    coverImage:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCPrzUJe5tVTlQjB5l5hYoKz4wYrLVhdhGHpnvnpMsWe6LHDxqwhVTzUI6pfoO8oFjXzK3-_oCXL2NT3RMSVvHALwfU8TXs7Qr21wwmtvX70qO3MQR64Er5kmCCWGq5--B1UaWSCS2gjDTaJ3DfOWOexsvcMDgBX2-lTBPbeHrEg0xpO4Jye_PpvcxHRNWdlndcxaI1QL7tH3e2FSG9alBOEx6577y1ky7Skv003d3X',
+    facility: 'RSUD Merah Putih Kabupaten Magelang',
+    summary:
+      'Pembuatan serta finishing pintu geser dan pintu swing anti-radiasi, pelapisan timbal dinding, instalasi panel listrik 3-fase R-S-T, dan finishing interior ruang.',
+    coverImage: '/images/portfolio/rsud-merah-putih-magelang/ruang-panel-dan-pintu-dalam.jpeg',
     scopeOfWork: [
-      'Renovasi partisi dan lantai anti-bakteri',
-      'Penataan tata udara dan integrasi hepa filter',
-      'Pemasangan instalasi kabel tertutup dan rapi',
+      'Pembuatan, pemasangan, dan finishing pintu geser ganda serta pintu swing anti-radiasi',
+      'Renovasi, pemasangan timbal (Pb) dinding penuh, dan pengecatan finishing klinis',
+      'Instalasi panel distribusi listrik 3-fase R-S-T, lampu indikator radiasi, dan wastafel ruang',
+      'Pemasangan AC ruangan dan wallcovering mural Candi Borobudur',
     ],
     challenge:
-      'Pengendalian debu dan partikel konstruksi di lingkungan fasilitas kesehatan yang aktif beroperasi.',
+      'Menyatukan instalasi dua jenis pintu anti-radiasi (pintu geser utama pasien dan pintu swing akses petugas) bersama jalur panel listrik 3-fase dan wastafel medis di dalam satu ruang berstandar klinis.',
     solution:
-      'Sistem isolasi debu bertingkat dan pengerjaan bertahap sesuai zona kebersihan.',
+      'Tim RADAMED memasang rel penutup pintu geser lengkap dengan indikator radiasi di atas kusen, menata panel 3-fase R-S-T dalam casing pelindung rapi di samping pintu, serta menyelesaikan permukaan dinding dengan cat biru muda mengilap dan mural lokal.',
     gallery: [
       {
-        url: 'https://lh3.googleusercontent.com/aida/AEtjO1WbR-cMqAQ21DLgZ8XIPKVIMLQQg6YiO1weujVeO-RbY4omNOOA_owEWQX_FUgIYOzDQtV5I1NZs7LyKhZo2a4lk1NTd6FDNQvaIVSTf2j3Jh8fpqNgc3zUBmFri-0vuGS511NL8wwg2L1WCrP6I_YE_NPNTHH22_hlATk6VsAaJJEqYM7JC5MA90QJvLFl7YiO9GAmQPgB9ubzSfILsWAUnECHchnC-FHwwk7yc_gvwA',
-        caption: 'Pemasangan lantai vinyl antibakteri seamless',
+        url: '/images/portfolio/rsud-merah-putih-magelang/ruang-panel-dan-pintu-dalam.jpeg',
+        caption: 'Sisi dalam ruang radiologi dengan pintu geser anti-radiasi, panel distribusi listrik 3-fase R-S-T, dan wastafel medis.',
+        aspect: 'landscape',
       },
       {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBYn_ZLRmysywxT4zonZt98ngCWhQ7_PGc8Vc2x9OEUZma_E9JBJuWLmCFiohdeDX-DHpubBmEMCHZNz2Z3c7UnxjMSz9jUvkPKtf8f5C39fZEEmnWbCG1odRUHQMJpLyKuYoWpdGNJYInZE-IVie9Nn8N-iTQtmjjyfZ0BhGB4wD_so5hmD5nS0H0ZADDb-0ul45-HuLTGBnR62opEaxpFuDDjw57YWXfCHSA3KR1',
-        caption: 'Penyelesaian plafon dan sistem pencahayaan LED klinis',
+        url: '/images/portfolio/rsud-merah-putih-magelang/pintu-anti-radiasi.jpeg',
+        caption: 'Pembuatan, pemasangan, dan finishing pintu geser anti-radiasi berlapis timbal lengkap dengan rel penutup, handle stainless steel, dan lampu indikator radiasi.',
+        aspect: 'landscape',
       },
       {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBUbCv5mqTqBzGy1Ap3hzpwWvNYkRj8j35eFKJfcC4AqKy7fBYy7kfG3IRTTONy_GkPRcuPqPDwO-kcHYhbSMvUwJlaZTCXPbYeVx1n9rV8S8x9Wa6X6OHWLh3-kL607V_2gva6tuoPxqE25JngrnDo8jO6kCG49fS_YBJ6WGDVShnGoJ-nvDBWeRSFiIUjFQrPBUMhYpqSQmbdB3pp643GQPTZIzod3-0G95K7Nz4K',
-        caption: 'Ruang siap digunakan setelah proses disinfeksi',
+        url: '/images/portfolio/rsud-merah-putih-magelang/interior-dinding-biru-dan-mural.jpeg',
+        caption: 'Hasil renovasi dan finishing cat dinding biru klinis, plafon akustik dengan downlight, AC, dan mural ruang.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-merah-putih-magelang/pintu-akses-dan-kontrol-ruang.jpeg',
+        caption: 'Finishing pintu swing anti-radiasi akses petugas, saklar kontrol pencahayaan dan AC, serta area wastafel.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-merah-putih-magelang/finishing-dinding-dan-wastafel.jpeg',
+        caption: 'Pengecekan pemasangan wastafel dan perapihan area pintu akses petugas pada dinding proteksi timbal.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-merah-putih-magelang/dinding-proteksi-siap-alat.jpeg',
+        caption: 'Bidang dinding ruang pemeriksaan yang telah rampung dilapis timbal (Pb), gypsum, dan pengecatan finishing.',
+        aspect: 'landscape',
+      },
+      {
+        url: '/images/portfolio/rsud-merah-putih-magelang/finishing-mural-borobudur.jpeg',
+        caption: 'Finishing dinding mural Candi Borobudur lengkap dengan dua unit pendingin ruangan dan baris stopkontak tertanam rapi.',
+        aspect: 'landscape',
       },
     ],
   },
   {
-    id: 'prj-6',
-    slug: 'konsultasi-dan-instalasi',
-    title: 'Konsultasi dan Instalasi',
-    category: 'Instalasi Alat',
-    categorySlug: 'instalasi-alat',
-    facility: '[Nama fasilitas ditampilkan jika sudah diizinkan]',
-    summary: 'Dokumentasi pendampingan konsultasi dan instalasi alat kesehatan.',
-    coverImage:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBau1K-1EwJnVXcmS2J5i9gE1gczlPh2n1R63ib3zRm1WvmY5nuU2Wz6hsPqr1jyQ9HvCTbRT-W_uCQ-WvrHufXWawl5kg3tHuBq_rV1PgJ0n9lIPi_vXcPDnu0Av4cw6vERrPmZv31LLTb7FKgeoyQUfv8bReUVu9O3Vb7F2JKUKSPiun-NyhmC3U76uvPRhg3HnrVM71eKoxlwS6xJFYG-eSnfzTlJFy__YaWklbJ',
+    id: 'prj-kardinah-tegal',
+    slug: 'renovasi-timbal-anti-radiasi-rsud-kardinah-tegal',
+    title: 'Renovasi & Pelapisan Timbal Anti-Radiasi RSUD Kardinah Kota Tegal',
+    category: 'Renovasi',
+    categorySlug: 'renovasi',
+    facility: 'RSUD Kardinah, Kota Tegal',
+    summary:
+      'Renovasi ruang radiologi mencakup perakitan rangka baja ringan, pelapisan timbal (Pb) penuh pada dinding dan jendela kaca operator, penarikan jalur kabel daya, dan finishing mural.',
+    coverImage: '/images/portfolio/rsud-kardinah-tegal/pemasangan-mural-finishing.jpeg',
     scopeOfWork: [
-      'Studi kelayakan teknis pengadaan alat',
-      'Penyusunan jadwal dan prosedur instalasi',
-      'Pelatihan operasional dasar untuk teknisi fasilitas',
+      'Perakitan rangka kisi baja ringan dan pemasangan lembaran timbal (Pb) di seluruh sisi dinding',
+      'Pelapisan timbal anti-radiasi pada dinding sekitar pintu akses dan jendela kaca operator',
+      'Penarikan kabel daya berkapasitas besar serta pemasangan kotak inbow stopkontak',
+      'Penutupan dinding dan finishing mural ruang pemeriksaan',
     ],
     challenge:
-      'Menyelaraskan spesifikasi unit baru dengan instalasi mekanik dan beban kelistrikan eksisting.',
+      'Menjaga sambungan lembaran timbal tetap rapat di bagian sudut dinding dan sekeliling jendela pengamatan ruang operator, sambil menempatkan banyak jalur kabel listrik bertegangan.',
     solution:
-      'Simulasi instalasi pra-pengiriman dan pendampingan transfer pengetahuan langsung kepada tim internal.',
+      'Mengunci lembaran timbal pada rangka metal secara bertumpuk di setiap pertemuan sudut dan kusen jendela operator, lalu merangkai seluruh kabel daya serta boks stopkontak pada ruang rongga rangka di depan bidang timbal sebelum penutupan panel.',
     gallery: [
       {
-        url: 'https://lh3.googleusercontent.com/aida/AEtjO1UVSF3VNnSxpyCKe19BUcteahIk_Z0LgHIsol8y83bjYENvklBRWDN9SjHaTes4EB0T8ueFu75o8NkeotvyDyHanxPJNMP-ed7wauuCABnc4qqKouIxCE-7P5JFYRqoRgaABf0idg1Zf6TEyPDQ5P2zIebDdsDLJ7R3K22WajqtCaxyYe0Y_E-vmCiOPc1vDVAvHd-2ngBcjV4icsCKpQ3SNsehB-rWcfASPjlwA_JqD3-d54-K_oyazmYK',
-        caption: 'Konsultasi langsung bersama tim manajemen fasilitas',
+        url: '/images/portfolio/rsud-kardinah-tegal/pemasangan-mural-finishing.jpeg',
+        caption: 'Pemasangan dan perapihan akhir dinding mural panorama pada ruang pemeriksaan lengkap dengan dua unit AC.',
+        aspect: 'landscape',
       },
       {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBYn_ZLRmysywxT4zonZt98ngCWhQ7_PGc8Vc2x9OEUZma_E9JBJuWLmCFiohdeDX-DHpubBmEMCHZNz2Z3c7UnxjMSz9jUvkPKtf8f5C39fZEEmnWbCG1odRUHQMJpLyKuYoWpdGNJYInZE-IVie9Nn8N-iTQtmjjyfZ0BhGB4wD_so5hmD5nS0H0ZADDb-0ul45-HuLTGBnR62opEaxpFuDDjw57YWXfCHSA3KR1',
-        caption: 'Pemeriksaan manual teknis dan sertifikat pabrikan',
+        url: '/images/portfolio/rsud-kardinah-tegal/hasil-finishing-ruang-radiologi.jpeg',
+        caption: 'Tampilan dinding ruang radiologi yang telah tertutup panel pelindung timbal dan selesai dilapis mural interior.',
+        aspect: 'landscape',
       },
       {
-        url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBUbCv5mqTqBzGy1Ap3hzpwWvNYkRj8j35eFKJfcC4AqKy7fBYy7kfG3IRTTONy_GkPRcuPqPDwO-kcHYhbSMvUwJlaZTCXPbYeVx1n9rV8S8x9Wa6X6OHWLh3-kL607V_2gva6tuoPxqE25JngrnDo8jO6kCG49fS_YBJ6WGDVShnGoJ-nvDBWeRSFiIUjFQrPBUMhYpqSQmbdB3pp643GQPTZIzod3-0G95K7Nz4K',
-        caption: 'Serah terima unit dan pelatihan dasar penggunaan',
+        url: '/images/portfolio/rsud-kardinah-tegal/tim-perakitan-rangka-timbal.jpeg',
+        caption: 'Tim teknisi bekerja di dalam ruang merakit rangka kisi baja ringan dan lembaran timbal (Pb) di ketiga sisi dinding.',
+        aspect: 'portrait',
+      },
+      {
+        url: '/images/portfolio/rsud-kardinah-tegal/instalasi-kabel-daya-dan-stopkontak.jpeg',
+        caption: 'Pemasangan jalur kabel daya dan deretan kotak inbow stopkontak pada rangka di depan lapisan lembaran timbal.',
+        aspect: 'portrait',
+      },
+      {
+        url: '/images/portfolio/rsud-kardinah-tegal/pintu-dan-jendela-kaca-operator.jpeg',
+        caption: 'Pelapisan penuh lembaran timbal anti-radiasi di area pintu akses ruang dan sekeliling jendela kaca ruang operator.',
+        aspect: 'portrait',
+      },
+      {
+        url: '/images/portfolio/rsud-kardinah-tegal/detail-sambungan-sudut-timbal.jpeg',
+        caption: 'Detail sambungan sudut ruangan berproteksi timbal (Pb) yang terkunci rapat dengan kisi rangka metal.',
+        aspect: 'portrait',
       },
     ],
   },
 ];
-

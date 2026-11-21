@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import { COMPANY_PROFILE, SERVICES } from '@/data/mockData';
+import { COMPANY_PROFILE } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
 import type { SanityCompanyProfile } from '@/sanity/lib/queries';
 import { urlForImage } from '@/sanity/lib/image';
@@ -16,7 +16,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ profile }) => {
   const intro = profile?.intro || 'Layanan instalasi, perawatan, dan perbaikan alat kesehatan dengan spesialisasi radiologi.';
   const heroImageSrc = profile?.heroImage?.asset
     ? urlForImage(profile.heroImage).url()
-    : SERVICES[0].image;
+    : COMPANY_PROFILE.heroImage;
 
   return (
     <section
@@ -91,7 +91,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ profile }) => {
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
                 <Image
                   src={heroImageSrc}
-                  alt="Instalasi dan kalibrasi alat radiologi medis oleh engineer PT RADAMED"
+                  alt="Ruang radiologi berproteksi timbal dengan pintu anti-radiasi dan panel distribusi daya 3-fase yang dikerjakan PT RADAMED"
                   fill
                   priority
                   className="object-cover"

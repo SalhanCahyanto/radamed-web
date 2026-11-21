@@ -41,8 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# design reference files
+# design reference & raw source photos (web assets live in public/images/)
 acuan-desain/
-
-.vercel
-.env*
+Foto Untuk Isi Portofolio/

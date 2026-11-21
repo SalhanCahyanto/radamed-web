@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { COMPANY_PROFILE } from '@/data/mockData';
 import { sanityFetch } from '@/sanity/lib/fetch';
+import { siteUrl } from '@/sanity/env';
 import { SITE_SETTINGS_QUERY, type SanitySiteSettings } from '@/sanity/lib/queries';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -22,6 +23,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: `${COMPANY_PROFILE.shortName} | ${COMPANY_PROFILE.positioning}`,
     template: `%s | ${COMPANY_PROFILE.shortName}`,

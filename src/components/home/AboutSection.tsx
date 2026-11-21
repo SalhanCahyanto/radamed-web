@@ -2,9 +2,10 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import { COMPANY_PROFILE, SERVICES } from '@/data/mockData';
+import { COMPANY_PROFILE } from '@/data/mockData';
 import { MotionWrapper } from '@/components/common/MotionWrapper';
 import type { SanityCompanyProfile } from '@/sanity/lib/queries';
+import { urlForImage } from '@/sanity/lib/image';
 
 interface AboutSectionProps {
   profile?: SanityCompanyProfile | null;
@@ -14,6 +15,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
   const story =
     profile?.intro ||
     'RADAMED dibangun oleh tiga engineer dengan pengalaman lebih dari 10 tahun di bidang radiologi dan berbagai jenis peralatan kesehatan. Pelayanan dan kepuasan pelanggan adalah prioritas kami.';
+
+  const aboutImageSrc = profile?.heroImage?.asset
+    ? urlForImage(profile.heroImage).url()
+    : COMPANY_PROFILE.aboutImage;
 
   const values =
     profile?.values && profile.values.length > 0
@@ -62,8 +67,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
             <MotionWrapper delay={0.2}>
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border border-[#EAF1FC] bg-slate-100">
                 <Image
-                  src={SERVICES[2].image}
-                  alt="Biomedical engineer RADAMED saat melakukan perbaikan dan pengujian teknis"
+                  src={aboutImageSrc}
+                  alt="Tim teknisi PT RADAMED memasang papan pelapis dinding di atas lembaran timbal anti-radiasi"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"

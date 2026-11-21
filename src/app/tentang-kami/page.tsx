@@ -60,7 +60,7 @@ export default async function TentangKamiPage() {
 
   const imageSrc = profile?.heroImage?.asset
     ? urlForImage(profile.heroImage).url()
-    : SERVICES[2].image;
+    : COMPANY_PROFILE.aboutPortraitImage;
 
   return (
     <div className="flex flex-col w-full">
